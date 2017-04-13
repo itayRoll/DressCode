@@ -81,9 +81,20 @@ class ClothingItem(models.Model):
 		('8','LONG PANTS'),
 		('9','SWIM SUIT'),
 		('10','SUIT'),
+		('11', 'PANTS'),
+		('12', 'SKIRT'),
 	)
+
+	PTTERN = (
+		('1', 'NONE'),
+		('2', 'STRIPES'),
+		('3', 'DOTS'),
+		('4', 'CHECKED'),
+	)
+
 	color = models.CharField(max_length=2, choices=COLORS)
-	_type = models.CharField(max_length=2, choices=TYPES)
+	type = models.CharField(max_length=2, choices=TYPES)
+	pattern = models.CharField(max_length=2, choices=PTTERN)
 	question_id = models.IntegerField()
 
 
