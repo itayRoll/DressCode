@@ -12,7 +12,7 @@
 	<div>
 	<p> <br> </p>
 		<button id="yay{{ question.pk }}" type="button" class="btn btn-success" onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})"><span class="glyphicon glyphicon-thumbs-up"></span></button>
-		<!-- <button id="meh{{ question.pk }}" type="button" class="btn" onclick="postAnswer({{ question.pk }}, 0)"><span class="glyphicon glyphicon-minus"></span></button> -->
+		<button id="meh{{ question.pk }}" type="button" class="btn" onclick="postAnswer({{ question.pk }}, 0)"><span class="glyphicon glyphicon-minus"></span></button>
 		<button id="nay{{ question.pk }}" type="button" class="btn btn-danger" onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})"><span class="glyphicon glyphicon-thumbs-down"></span></button>
 		<!-- <p> <br> </p> -->
 		<div id="msg{{ question.pk }}" hidden="true" class="panel panel-info" style="width: 160px; text-align: center;">

@@ -86,16 +86,17 @@ class ClothingItem(models.Model):
 		('12', 'SKIRT'),
 	)
 
-	PTTERN = (
+	PATTERN = (
 		('1', 'NONE'),
 		('2', 'STRIPES'),
 		('3', 'DOTS'),
 		('4', 'CHECKED'),
 	)
 
+<<<<<<< HEAD
 	color = models.CharField(max_length=2, choices=COLORS, null=True)
 	type = models.CharField(max_length=2, choices=TYPES, null=True)
-	pattern = models.CharField(max_length=2, choices=PTTERN, null=True)
+	pattern = models.CharField(max_length=2, choices=PATTERN, null=True)
 	question_id = models.IntegerField()
 
 	def __str__(self):
