@@ -17,11 +17,15 @@ class Fuser(models.Model):
 		('u', 'UNKOWN'),
 	)
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	dob = models.DateTimeField(editable=False)	# date of birth
+	dob = models.DateField(null=True, verbose_name='Date Of Birth')
+	date_joined = models.DateTimeField(default=timezone.now(), editable=False)
 	score = models.IntegerField(default=10)		# first question is on the house
 	gender = models.CharField(max_length=1, choices=GENDERS)
 	num_questions = models.IntegerField(default=0)
 	num_answers = models.IntegerField(default=0)
+
+	def __str__(self):
+		return '{0}'.format(self.user)
 
 
 class Question(models.Model):
@@ -33,6 +37,10 @@ class Question(models.Model):
 	published_date = models.DateTimeField(default=timezone.now)
 	title = models.CharField(max_length=80)
 	description = models.TextField()
+	due_date = models.DateTimeField(null=True)
+
+	def __str__(self):
+		return self.title
 
 
 class Answer(models.Model):

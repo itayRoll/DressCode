@@ -1,0 +1,22 @@
+{%  extends 'dresscodeapp/base.html' %}
+
+{% block content %}
+	<div class="question_container">
+	<div>
+		<h3> <b>{{ question.title }} </b></h3>
+		<p> {{ question.due_date }} </p>
+	</div>
+	<div>
+		<img style="border-radius: 20px 20px 20px 20px;" src={{ question.photo_path }} alt="" class="homeImage" />
+	</div>
+	<div>
+	<p> <br> </p>
+		<button id="yay{{ question.pk }}" type="button" class="btn btn-success" onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+		<!-- <button id="meh{{ question.pk }}" type="button" class="btn" onclick="postAnswer({{ question.pk }}, 0)"><span class="glyphicon glyphicon-minus"></span></button> -->
+		<button id="nay{{ question.pk }}" type="button" class="btn btn-danger" onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+		<!-- <p> <br> </p> -->
+		<div id="msg{{ question.pk }}" hidden="true" class="panel panel-info" style="width: 160px; text-align: center;">
+      		<div id="msgText{{ question.pk }}" class="panel-heading"></div>
+    	</div>
+	</div>
+{% endblock %}

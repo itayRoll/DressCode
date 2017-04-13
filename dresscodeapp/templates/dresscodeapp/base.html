@@ -1,0 +1,46 @@
+<html>
+	<head>
+		{% load staticfiles %}
+		<title>DressCode</title>
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
+		<link href="//fonts.googleapis.com/css?family=Ubuntu+Condensed&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+		<link href="//fonts.googleapis.com/css?family=Quicksand&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+		<link href="//fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+		<link href="//fonts.googleapis.com/css?family=Bungee+Inline&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+		<!-- <link rel="stylesheet" href="{% static 'css/casino.css' %}"> -->
+		<script src="{% static 'js/main.js' %}"></script>
+		<script type="text/javascript">
+			var CSRF_TOKEN = '{{ csrf_token }}';
+		</script>
+	</head>
+	<body>
+		<div class="page-header">
+			<h1><a href="#">DressCode</a></h1>
+			<nav class="nav">
+				<ul>
+					<li>
+						<a href="#">{{ request.user.username }}</a>
+						<ul>
+							<li><a href="#">Profile</a></li>
+							<li><a href="#">Settings</a></li>
+							<li><a href="#">Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+		</div>
+
+		<div id="main" class="content container">
+			<div class="row col-md-8">
+				{% block content %}
+            	{% endblock %}
+            </div>
+        </div>
+		<!-- <div class="page-ender">
+			add social media links
+		</div> -->
+	</body>
+</html>
