@@ -38,6 +38,7 @@ class Question(models.Model):
 	title = models.CharField(max_length=80)
 	description = models.TextField()
 	due_date = models.DateTimeField(null=True)
+	clothing_items = models.ManyToManyField('ClothingItem')
 
 	def __str__(self):
 		return self.title
@@ -92,9 +93,12 @@ class ClothingItem(models.Model):
 		('4', 'CHECKED'),
 	)
 
-	color = models.CharField(max_length=2, choices=COLORS)
-	type = models.CharField(max_length=2, choices=TYPES)
-	pattern = models.CharField(max_length=2, choices=PTTERN)
+	color = models.CharField(max_length=2, choices=COLORS, null=True)
+	type = models.CharField(max_length=2, choices=TYPES, null=True)
+	pattern = models.CharField(max_length=2, choices=PTTERN, null=True)
 	question_id = models.IntegerField()
+
+	def __str__(self):
+		return '{0} {1}'.format(self.color[1], self.type[1])
 
 

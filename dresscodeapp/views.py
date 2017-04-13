@@ -11,13 +11,25 @@ def index(request):
 	return render(request, 'dresscodeapp/base.html', {})
 
 
-# def post_question(request):
+def post_question_page(request):
+	return render(request, 'dresscodeapp/postquestion.html', {})
+
+def post_question(request):
 	# check if user is eligible for a question
-	# fuser = Fuser.objects.get(user__username=request.user.username)
-	# if fuser.score < 10:
+	fuser = Fuser.objects.get(user__username=request.user.username)
+	if fuser.score < 10:
 		# can't post a question - tell user to answer (10-score) more questions in order to post
-		# pass
-	# else:
+		return HttpResponse('You are not eligible to post')
+	fuser = Fuser.objects.get(user__username=request.user.username)
+	question = Question(
+		user=fuser,
+		title='shit',
+		description='fuck',
+		photo_path='none',
+		clothing_items=None
+	)
+	question.save()
+	return HttpResponse('hooray!')
 
 
 def get_all_questions(request):

@@ -23,5 +23,5 @@ urlpatterns = [
     url(r'^getquestions/$', views.get_all_questions, name='get_all_questions'),
     url(r'^question/(?P<q_pk>\d+)/$', views.question_page, name='question_page'),
     url(r'^post-answer/$', views.post_answer, name='post_answer'),
-    # url(r'^ask/$', views.post_question, name='post_question'),
+    url(r'^question/post/$', views.post_question_page, name='post_question_page'),
 ]
