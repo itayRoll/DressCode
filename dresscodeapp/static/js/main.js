@@ -1,10 +1,16 @@
 function postAnswer(questionId, vote, userScore){
 	// add loading animation to button
-	$('#yay'+questionId).hide()
-	$('#nay'+questionId).hide()
-	$('#msg'+questionId).show()
-	var text = userScore > 10 ? 'You have enough credit. Post!' : 'Only '+ (10 - userScore) + ' to go';
-	$('#msgText'+questionId).text(text);
+	//$('#pic'+questionId).hide()
+	//$('#yay'+questionId).hide()
+	//$('#meh'+questionId).hide()
+	//$('#nay'+questionId).hide()
+	$('#thanks'+questionId).show()
+	$('#question'+questionId).hide()
+	$('#thanks'+questionId).fadeOut(1000)
+	var numOfVisibleRows = $('tr:visible')
+	var thankyou = 'Thanks for answering!';
+	var text = userScore > 10 ? '\nYou have enough credit. Post!' : 'Only '+ (10 - userScore) + ' to go';
+	$('#msgText'+questionId).text(thankyou+text + numOfVisibleRows);
 	$.ajax({
 				url: "/post-answer/",
 				type: 'POST',
@@ -23,4 +29,11 @@ function postAnswer(questionId, vote, userScore){
       			}
   			}
 		});
+}
+
+function toggle_by_id(cls, on) {
+    var lst = document.getElementById(cls);
+    for(var i = 0; i < lst.length; ++i) {
+        lst[i].style.display = on ? '' : 'none';
+    }
 }
