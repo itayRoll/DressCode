@@ -85,7 +85,7 @@ class ClothingItem(models.Model):
 		('12', 'SKIRT'),
 	)
 
-	PTTERN = (
+	PATTERN = (
 		('1', 'NONE'),
 		('2', 'STRIPES'),
 		('3', 'DOTS'),
@@ -94,7 +94,7 @@ class ClothingItem(models.Model):
 
 	color = models.CharField(max_length=2, choices=COLORS)
 	type = models.CharField(max_length=2, choices=TYPES)
-	pattern = models.CharField(max_length=2, choices=PTTERN)
+	pattern = models.CharField(max_length=2, choices=PATTERN)
 	question_id = models.IntegerField()
 
 

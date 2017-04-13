@@ -21,9 +21,12 @@ def index(request):
 # else:
 
 
-def get_all_questions(request):
-    questions = Question.objects.all()
-    return HttpResponse(questions)
+def filter_questions(request):
+	clothingItems = [x[1] for x in ClothingItem.TYPES]
+	colors = [x[1] for x in ClothingItem.COLORS]
+	patterns = [x[1] for x in ClothingItem.PATTERN]
+	genders = [x[1] for x in Fuser.GENDERS]
+   	return render(request, 'dresscodeapp/filterquestions.html', {'clothingItems':clothingItems, 'colors':colors, 'patterns':patterns , 'genders':genders})
 
 
 def question_page(request, q_pk):
