@@ -90,7 +90,8 @@ function postQuestion(){
       				// Error
       				alert(result.error_text);
   				} else {
-              		// Success
+              		alert("Your question was posted successfully!\nLet's answer other users questions!")
+              		window.location.replace("/questionsfeed/");
       			}
   			}
 		});
