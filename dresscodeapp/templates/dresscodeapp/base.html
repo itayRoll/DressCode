@@ -1,44 +1,49 @@
 <html>
-	<head>
-		{% load staticfiles %}
-		<title>DressCode</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
-		<script src="{% static 'js/main.js' %}"></script>
-		<script type="text/javascript">
+<head>
+    {% load staticfiles %}
+    <title>DressCode</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script type="text/javascript">
 			var CSRF_TOKEN = '{{ csrf_token }}';
-		</script>
-	</head>
-	<body>
-		<div class="page-header">
-			<h1><a href="#">DressCode</a></h1>
-			<nav class="nav">
-				<ul>
-					<li>
-						<a href="#">{{ request.user.username }}</a>
-						<ul>
-							<li><a href="#">Profile</a></li>
-							<li><a href="#">Settings</a></li>
-							<li><a href="#">Logout</a></li>
-						</ul>
-					</li>
-				</ul>
-			</nav>
-		</div>
 
-		<div id="main" class="content container">
-			<div class="row col-md-8">
-				{% block content %}
-            	{% endblock %}
-            </div>
-        </div>
-		<!-- <div class="page-ender">
-			add social media links
-		</div> -->
-	</body>
+    </script>
+</head>
+<body>
+<div class="page-header">
+    <h1><a href="#">DressCode</a></h1>
+    <nav class="nav">
+        <ul>
+            <li>
+                <a href="#">{{ request.user.username }}</a>
+                <ul>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="#">Settings</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div id="main" class="content container">
+    <div class="row col-md-8">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+<!-- <div class="page-ender">
+    add social media links
+</div> -->
+</body>
 </html>

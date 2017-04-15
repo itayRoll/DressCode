@@ -9,18 +9,27 @@
 	         <div class='col-md-6'>
 	               <div class="form-group">
 	                  <label class="control-label">Due Date</label>
-	                  <div class='input-group date' id='datetimepicker1'>
-	                     <input type='text' class="form-control" />
-	                     <span class="input-group-addon">
-	                     <span class="glyphicon glyphicon-calendar"></span>
-	                     </span>
-	                  </div>
+	                  <div class="input-group date" data-provide="datepicker">
+						<input class="form-control" id="date" name="date"  data-format="MM/DD/YYY" placeholder="MM/DD/YYY" type="text"/>
+						<div class="input-group-addon">
+							<span class="glyphicon glyphicon-th"></span>
+						</div>
+					</div>
 	               </div>
 	            </div>
             <div class="col-md-6">
                <div class="form-group">
                   <label class="control-label">Title</label>
-                  <input type="text" class="form-control" name="fname" id="fname">
+                  <select id="title" class="form-control">
+							<option value="" selected disabled>Event</option>
+							<option>First date</option>
+							<option>Holiday dinner</option>
+							<option>Job interview</option>
+							<option>First day at school</option>
+							<option>First day at new job</option>
+							<option>Wedding</option>
+							<option>Bar-Mitzva</option>
+				  </select>
                </div>
             </div>
          </div>
@@ -33,84 +42,81 @@
             </div>
          </div>
          <div id="clothing-items">
-	         <div class="row">
-	         	<div class='col-md-2'>
-	         		<div class="dropdown">
-					  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Item
-					  <span class="caret"></span></button>
-					  <ul class="dropdown-menu">
-					    <li><a href="#">T-Shirt</a></li>
-					    <li><a href="#">Shirt</a></li>
-					    <li><a href="#">Hoodie</a></li>
-					    <li><a href="#">Hoodie</a></li>
-					    <li><a href="#">Suit</a></li>
-					    <li><a href="#">Short Pants</a></li>
-					    <li><a href="#">Jeans</a></li>
-					    <li><a href="#">Pants</a></li>
-					    <li><a href="#">Dress</a></li>
-					    <li><a href="#">Skirt</a></li>
-					    <li><a href="#">Shoes</a></li>
-					    <li><a href="#">Swim Suit</a></li>
-					    <li><a href="#">Hat</a></li>
-					  </ul>
-					</div>
-	         	</div>
-	         	<div class='col-md-2'>
-	         		<div class="dropdown">
-					  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Color
-					  <span class="caret"></span></button>
-					  <ul class="dropdown-menu">
-					    <li><a href="#">Blue</a></li>
-					    <li><a href="#">Red</a></li>
-					    <li><a href="#">Black</a></li>
-					    <li><a href="#">White</a></li>
-					    <li><a href="#">Purple</a></li>
-					    <li><a href="#">Green</a></li>
-					    <li><a href="#">Yellow</a></li>
-					    <li><a href="#">Brown</a></li>
-					    <li><a href="#">Grey</a></li>
-					  </ul>
-					</div>
-	         	</div>
-	         	<div class='col-md-2'>
-	         		<div class="dropdown">
-					  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Pattern
-					  <span class="caret"></span></button>
-					  <ul class="dropdown-menu">
-					    <li><a href="#">None</a></li>
-					    <li><a href="#">Stripes</a></li>
-					    <li><a href="#">Dots</a></li>
-					    <li><a href="#">Checked</a></li>
-					  </ul>
-					</div>
-	         	</div>
-	         	<div class='col-md-2'>
-	         		<button class="btn btn-warning" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button>
-	         	</div>
-	         </div>
-         </div>
+			 <table id="items">
+				 <tr>
+					<td class='col-md-2'>
+						<select class="form-control">
+							<option value="" selected disabled>Item</option>
+							<option>T-Shirt</option>
+							<option>Shirt</option>
+							<option>Hoodie</option>
+							<option>Hoodie</option>
+							<option>Suit</option>
+							<option>Short Pants</option>
+							<option>Jeans</option>
+							<option>Pants</option>
+							<option>Dress</option>
+							<option>Skirt</option>
+							<option>Shoes</option>
+							<option>Swim Suit</option>
+							<option>Hat</option>
+						  </select>
+						</td>
+						<td class='col-md-2'>
+							<select class="form-control">
+								<option value="" selected disabled>Color</option>
+								<option>Blue</option>
+								<option>Red</option>
+								<option>Black</option>
+								<option>White</option>
+								<option>Purple</option>
+								<option>Green</option>
+								<option>Yellow</option>
+								<option>Brown</option>
+								<option>Grey</option>
+							  </select>
+						</td>
+						<td class='col-md-2'>
+							<select class="form-control">
+								<option value="" selected disabled>Pattern</option>
+								<option>None</option>
+								<option>Stripes</option>
+								<option>Dots</option>
+								<option>Checked</option>
+							 </select>
+						</td>
+						<td class='col-md-2'>
+							<button class="btn btn-warning" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button>
+						</td>
+						<td class='col-md-2'>
+							<button class="btn btn-warning" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button>
+						</td>
+				 </tr>
+				 </table>
+			 </div>
 <div><br></div>
-         <input type="file" name="pic" accept="image/*">
+		  <br>
+         <input type="file" id="pic" name="pic" accept="image/*">
          <div><br></div>
-         <input type="submit" class="btn btn-primary" value="Submit">
+         <input type="submit" class="btn btn-primary" value="Submit" onclick="postQuestion()" >
+         <div id="output" class="panel-heading"></div>
       </div>
    </div>
 </div>
 <script>
- $(function () {
-      $('#datetimepicker1').datetimepicker();
- });
+    $(document).ready(function(){
+      var date_input=$('input[name="date"]'); //our date input has the name "date"
+      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+      var options={
+        format: 'mm/dd/yyyy',
+        container: container,
+        todayHighlight: true,
+        autoclose: true,
+      };
+      date_input.datepicker(options);
+    })
+</script>
+<script type="text/javascript">
+			var CSRF_TOKEN = '{{ csrf_token }}';
 </script>
 {% endblock %}
-
-COLORS = (
-		('1', 'BLUE'),
-		('2', 'RED'),
-		('3', 'BLACK'),
-		('4', 'WHITE'),
-		('5', 'PURPLE'),
-		('6', 'GREEN'),
-		('7', 'YELLOW'),
-		('8', 'BROWN'),
-		('9', 'GREY'),
-	)

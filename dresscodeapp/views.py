@@ -13,24 +13,28 @@ def index(request):
 
 
 def post_question_page(request):
-	return render(request, 'dresscodeapp/postquestion.html', {})
+    return render(request, 'dresscodeapp/postquestion.html', {})
 
+
+"""
 def post_question(request):
-	# check if user is eligible for a question
-	fuser = Fuser.objects.get(user__username=request.user.username)
-	if fuser.score < 10:
-		# can't post a question - tell user to answer (10-score) more questions in order to post
-		return HttpResponse('You are not eligible to post')
-	fuser = Fuser.objects.get(user__username=request.user.username)
-	question = Question(
-		user=fuser,
-		title='title',
-		description='desc',
-		photo_path='none',
-		clothing_items=None
-	)
-	question.save()
-	return HttpResponse('hooray!')
+    # check if user is eligible for a question
+    fuser = Fuser.objects.get(user__username=request.user.username)
+    if fuser.score < 10:
+        # can't post a question - tell user to answer (10-score) more questions in order to post
+        return HttpResponse('You are not eligible to post')
+    fuser = Fuser.objects.get(user__username=request.user.username)
+    question = Question(
+        user=fuser,
+        title='title',
+        description='desc',
+        photo_path='none',
+        clothing_items=None
+    )
+    question.save()
+    return HttpResponse('hooray!')
+    """
+
 
 # def post_question(request):
 # check if user is eligible for a question
@@ -41,11 +45,12 @@ def post_question(request):
 # else:
 
 def filter_questions(request):
-	clothingItems = [x[1] for x in ClothingItem.TYPES]
-	colors = [x[1] for x in ClothingItem.COLORS]
-	patterns = [x[1] for x in ClothingItem.PATTERN]
-	genders = [x[1] for x in Fuser.GENDERS]
-   	return render(request, 'dresscodeapp/filterquestions.html', {'clothingItems':clothingItems, 'colors':colors, 'patterns':patterns , 'genders':genders})
+    clothingItems = [x[1] for x in ClothingItem.TYPES]
+    colors = [x[1] for x in ClothingItem.COLORS]
+    patterns = [x[1] for x in ClothingItem.PATTERN]
+    genders = [x[1] for x in Fuser.GENDERS]
+    return render(request, 'dresscodeapp/filterquestions.html',
+                  {'clothingItems': clothingItems, 'colors': colors, 'patterns': patterns, 'genders': genders})
 
 
 def question_page(request, q_pk):
@@ -81,3 +86,32 @@ def get_questions_feed(request):
     questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids).order_by(
         '-published_date')[:2]
     return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
+
+
+def post_question(request):
+    photo_path = request.POST.get('path')
+    title = request.POST.get('title')
+    description = request.POST.get('description')
+    date = request.POST.get('date')#.join(" 23:59:59")
+    date_time = (date+" 23:59:59").encode('ascii')
+    date = datetime.strptime(date_time, '%m/%d/%Y %H:%M:%S')
+    items_tmp = request.POST.get('items_lst')
+    all_items = items_tmp.split("#")
+
+    question = Question(
+        user=Fuser.objects.get(user__username=request.user.username),
+        title=title,
+        description=description,
+        photo_path=photo_path,
+        due_date=date
+    )
+    question.save()
+    q_id = Question.objects.filter(user__user__username=request.user.username).order_by('-published_date')[0].pk
+    for item in all_items:
+        sub_items = item.split(",")
+        clothing_item = ClothingItem(color=sub_items[1].upper(), type=sub_items[0].upper(),
+                                     pattern=sub_items[2].upper(), question_id=q_id)
+        clothing_item.save()
+        question.clothing_items.add(clothing_item)
+        question.save()
+    return HttpResponse('succes')

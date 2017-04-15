@@ -17,10 +17,6 @@
     <script src="{% static 'js/main.js' %}"></script>
     <script type="text/javascript">
 			var CSRF_TOKEN = '{{ csrf_token }}';
-
-
-
-
     </script>
 </head>
 <body>
@@ -45,7 +41,7 @@
         {% block content %}
         {%if questions %}
         <div id="feed" class="question_container">
-            <table>
+            <table id="questions_table">
                 <tr>
                     {% for question in questions%}
                     <td id="question{{ question.pk }}">
@@ -55,7 +51,8 @@
                             <p> {{ question.due_date }} </p>
                         </div>
                         <div>
-                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src={{ question.photo_path }}
+                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src={{
+                                 question.photo_path }}
                                  alt=""
                                  class="homeImage"/>
                         </div>
@@ -80,14 +77,19 @@
                         </div>
                     </td>
                     <br/>
-                    </tr>
-                    {%endfor%}
+                </tr>
+                {%endfor%}
                 </tr>
             </table>
             {%else %}
             <div> no new questions for you! ask your own!</div>
             {%endif%}
             {% endblock %}
+            <div>
+                <button id="reload" type="button" class="btn" style="display: none;"
+                        onclick="reload()">Load more Looks!</button>
+
+            </div>
         </div>
     </div>
 </div>

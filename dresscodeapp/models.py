@@ -93,13 +93,13 @@ class ClothingItem(models.Model):
 		('4', 'CHECKED'),
 	)
 
-<<<<<<< HEAD
+
 	color = models.CharField(max_length=2, choices=COLORS, null=True)
 	type = models.CharField(max_length=2, choices=TYPES, null=True)
 	pattern = models.CharField(max_length=2, choices=PATTERN, null=True)
 	question_id = models.IntegerField()
 
-	def __str__(self):
-		return '{0} {1}'.format(self.color[1], self.type[1])
+	#def __str__(self):
+	#	return '{0} {1}'.format(self.color[1], self.type[1])
 
 
