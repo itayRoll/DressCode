@@ -71,10 +71,15 @@ def post_answer(request):
     fuser.score += 1
     vote = request.POST['vote']
     question_pk = request.POST['question_id']
+    items_not_as_pic = request.POST.get('itemsNotAsPic')
+
     answer = Answer(vote=vote, question_id=question_pk, user=fuser)
     answer.save()
     fuser.save()
     return HttpResponse('succes')
+
+def find_spammer_by_answer(question_id, asker_id, answerer_id):
+    
 
 
 def get_questions_feed(request):
@@ -85,6 +90,10 @@ def get_questions_feed(request):
     questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
     questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids).order_by(
         '-published_date')[:2]
+    items_dict = {}
+    for question in questions_feed:
+        items_dict[question.pk] = []
+        items_dict[question.pk] = [val for val in question.clothing_items.all()]
     return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
 
 
@@ -106,12 +115,16 @@ def post_question(request):
         due_date=date
     )
     question.save()
-    q_id = Question.objects.filter(user__user__username=request.user.username).order_by('-published_date')[0].pk
     for item in all_items:
         sub_items = item.split(",")
-        clothing_item = ClothingItem(color=sub_items[1].upper(), type=sub_items[0].upper(),
-                                     pattern=sub_items[2].upper(), question_id=q_id)
-        clothing_item.save()
-        question.clothing_items.add(clothing_item)
+        db_item = ClothingItem.objects.filter(color=sub_items[1].upper(), type=sub_items[0].upper(),
+                                     pattern=sub_items[2].upper())
+        if not db_item:
+            db_item = ClothingItem(color=sub_items[1].upper(), type=sub_items[0].upper(),
+                                     pattern=sub_items[2].upper())
+            db_item.save()
+            question.clothing_items.add(db_item)
+        else:
+            question.clothing_items.add(db_item[0].pk)
         question.save()
     return HttpResponse('succes')

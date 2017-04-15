@@ -49,6 +49,11 @@
                             <h3><b>{{ question.title }} </b></h3>
                             <h5>{{ question.description }} </h5>
                             <p> {{ question.due_date }} </p>
+                            <p>{% if question.clothing_items%}
+                            {% for clothing_item in question.clothing_items.all %}
+                                    <li>{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</li>
+                            {% endfor %}
+                            {%endif%}</p>
                         </div>
                         <div>
                             <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src={{
@@ -57,6 +62,10 @@
                                  class="homeImage"/>
                         </div>
                         <div>
+                            <p><br></p>
+                            <div class="checkbox">
+                              <label><input type="checkbox" value="" id="checkbox{{ question.pk }}">Clothing items don't fit the photo</label>
+                            </div>
                             <p><br></p>
                             <button id="yay{{ question.pk }}" type="button" class="btn btn-success"
                                     onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})"><span

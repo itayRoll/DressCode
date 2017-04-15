@@ -4,6 +4,11 @@ function postAnswer(questionId, vote, userScore){
 	// add loading animation to button
 	$('#thanks'+questionId).show()
 	$('#question'+questionId).hide()
+    var itemsNotAsPic = true
+	if ($('#checkbox'+questionId).checked) {
+        itemsNotAsPic = false
+        alert("checked");
+	}
 	$('#thanks'+questionId).fadeOut(1000)
 	var numOfVisibleRows = $('#questions_table tr:visible').length
 	var thankyou = 'Thanks for answering!';
@@ -19,6 +24,7 @@ function postAnswer(questionId, vote, userScore){
 				data: {
 					'question_id': questionId,
 					'vote': vote,
+					'itemsNotAsPic': itemsNotAsPic,
 					csrfmiddlewaretoken: CSRF_TOKEN,
 				},
 			success: function(response) {

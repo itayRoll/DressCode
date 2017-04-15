@@ -56,6 +56,7 @@ class Answer(models.Model):
 	user = models.ForeignKey('Fuser', null=True)
 	published_date = models.DateTimeField(default=timezone.now)
 	vote = models.CharField(max_length=1, choices=VOTES)
+	items_not_as_pic = models.BooleanField(default=False)
 	question_id = models.IntegerField()
 
 
@@ -97,7 +98,7 @@ class ClothingItem(models.Model):
 	color = models.CharField(max_length=2, choices=COLORS, null=True)
 	type = models.CharField(max_length=2, choices=TYPES, null=True)
 	pattern = models.CharField(max_length=2, choices=PATTERN, null=True)
-	question_id = models.IntegerField()
+	question_id = models.IntegerField(null=True)
 
 	#def __str__(self):
 	#	return '{0} {1}'.format(self.color[1], self.type[1])
