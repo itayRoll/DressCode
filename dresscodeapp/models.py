@@ -23,6 +23,8 @@ class Fuser(models.Model):
 	gender = models.CharField(max_length=1, choices=GENDERS)
 	num_questions = models.IntegerField(default=0)
 	num_answers = models.IntegerField(default=0)
+	spammer_credit = models.IntegerField(default=0)
+	spammer = models.BooleanField(default=False)
 
 	def __str__(self):
 		return '{0}'.format(self.user)
@@ -39,6 +41,7 @@ class Question(models.Model):
 	description = models.TextField()
 	due_date = models.DateTimeField(null=True)
 	clothing_items = models.ManyToManyField('ClothingItem')
+	items_not_as_pic = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.title

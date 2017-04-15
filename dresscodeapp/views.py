@@ -1,7 +1,13 @@
+import json
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from models import *
 from datetime import datetime, timedelta
+
+USER_SCORE_FOR_NEW_ANSWER = 1
+USER_SCORE_FOR_NEW_QUESTION = 7
+MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
 
 
 # Create your views here.
@@ -13,36 +19,9 @@ def index(request):
 
 
 def post_question_page(request):
-    return render(request, 'dresscodeapp/postquestion.html', {})
-
-
-"""
-def post_question(request):
-    # check if user is eligible for a question
     fuser = Fuser.objects.get(user__username=request.user.username)
-    if fuser.score < 10:
-        # can't post a question - tell user to answer (10-score) more questions in order to post
-        return HttpResponse('You are not eligible to post')
-    fuser = Fuser.objects.get(user__username=request.user.username)
-    question = Question(
-        user=fuser,
-        title='title',
-        description='desc',
-        photo_path='none',
-        clothing_items=None
-    )
-    question.save()
-    return HttpResponse('hooray!')
-    """
+    return render(request, 'dresscodeapp/postquestion.html', {'score': fuser.score})
 
-
-# def post_question(request):
-# check if user is eligible for a question
-# fuser = Fuser.objects.get(user__username=request.user.username)
-# if fuser.score < 10:
-# can't post a question - tell user to answer (10-score) more questions in order to post
-# pass
-# else:
 
 def filter_questions(request):
     clothingItems = [x[1] for x in ClothingItem.TYPES]
@@ -66,28 +45,73 @@ def post_answer(request):
     # handle as spam (warning / log user out / kill user)
     # pass
     # continue as usual
-    fuser = Fuser.objects.get(user__username=request.user.username)
-    fuser.num_answers += 1
-    fuser.score += 1
+    answerer = Fuser.objects.get(user__username=request.user.username)
+    answerer.num_answers += 1
+    answerer.score += USER_SCORE_FOR_NEW_ANSWER
     vote = request.POST['vote']
     question_pk = request.POST['question_id']
     items_not_as_pic = request.POST.get('itemsNotAsPic')
-
-    answer = Answer(vote=vote, question_id=question_pk, user=fuser)
+    if items_not_as_pic == u'true':
+        items_not_as_pic = True
+    else:
+        items_not_as_pic = False
+    answer = Answer(vote=vote, question_id=question_pk, user=answerer, items_not_as_pic=items_not_as_pic)
     answer.save()
-    fuser.save()
-    return HttpResponse('succes')
+    answerer.save()
+    find_spammer_by_answer(question_pk, answerer.id, vote)
+    return HttpResponse('success')
 
-def find_spammer_by_answer(question_id, asker_id, answerer_id):
-    
+
+def find_spammer_by_answer(question_id, answerer_name, vote):
+    question = Question.objects.filter(pk=question_id)
+    spammers = Fuser.objects.filter(spammer=True)
+    answers_without_spammers = Answer.objects.filter(question_id=question_id).exclude(user__in=spammers)
+    num_answers_items_not_as_pic = len(
+        Answer.objects.filter(pk__in=answers_without_spammers).exclude(items_not_as_pic=False))
+    num_answers_items = len(answers_without_spammers)
+    if num_answers_items >= MIN_ANSWERS_TO_DETERMINE_SPAMMER:
+        if num_answers_items / 2 + 1 < num_answers_items_not_as_pic:  # half the answerers think that question clothing items not as in pic
+            # asker is spammer!
+            update_spammer_credit(question[0].user.id)
+            question.items_not_as_pic = True
+        elif not question.items_not_as_pic:
+            question.items_not_as_pic = False
+        question[0].save()
+
+        fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='1'))
+        no_fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='2'))
+        partial_fit_votes = num_answers_items - fit_vote - no_fit_vote
+
+        curr_vote_num = partial_fit_votes
+        if vote == '1':
+            curr_vote_num = fit_vote
+        elif vote == '2':
+            curr_vote_num = no_fit_vote
+
+        if curr_vote_num / float(num_answers_items) < 0.5:  # less than 10% think tha same as the answerer
+            update_spammer_credit(answerer_name)
+
+
+def update_spammer_credit(id):
+    user = Fuser.objects.get(pk=id)
+    user.spammer_credit += 1
+    if user.spammer_credit >= 0.85 * (user.num_questions + user.num_answers):
+        user.spammer = True
+    user.save()
 
 
 def get_questions_feed(request):
-    # get only questions from users who are not me, that i haven't answered to already, ordered from new to old, that are not overdue
-    # maybe sort by increasing time from due date?
     curr_username = request.user.username
     answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
+
+    # user cant answer his own question, questions with past due date are irrelevant
     questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
+
+    # we will not negotiate with terrorists!!
+    questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(user__spammer=True)
+    questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(items_not_as_pic=True)
+
+    # user will not answer same question twice
     questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids).order_by(
         '-published_date')[:2]
     items_dict = {}
@@ -101,8 +125,8 @@ def post_question(request):
     photo_path = request.POST.get('path')
     title = request.POST.get('title')
     description = request.POST.get('description')
-    date = request.POST.get('date')#.join(" 23:59:59")
-    date_time = (date+" 23:59:59").encode('ascii')
+    date = request.POST.get('date')
+    date_time = (date + " 23:59:59").encode('ascii')
     date = datetime.strptime(date_time, '%m/%d/%Y %H:%M:%S')
     items_tmp = request.POST.get('items_lst')
     all_items = items_tmp.split("#")
@@ -118,13 +142,17 @@ def post_question(request):
     for item in all_items:
         sub_items = item.split(",")
         db_item = ClothingItem.objects.filter(color=sub_items[1].upper(), type=sub_items[0].upper(),
-                                     pattern=sub_items[2].upper())
+                                              pattern=sub_items[2].upper())
         if not db_item:
             db_item = ClothingItem(color=sub_items[1].upper(), type=sub_items[0].upper(),
-                                     pattern=sub_items[2].upper())
+                                   pattern=sub_items[2].upper())
             db_item.save()
             question.clothing_items.add(db_item)
         else:
             question.clothing_items.add(db_item[0].pk)
         question.save()
-    return HttpResponse('succes')
+
+    user = Fuser.objects.get(user__username=request.user.username)
+    user.score -= USER_SCORE_FOR_NEW_QUESTION
+    user.save()
+    return HttpResponse(json.dumps({'success': True}))

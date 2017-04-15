@@ -5,6 +5,7 @@
    <div class="panel panel-primary">
       <div class="panel-heading"></div>
       <div class="panel-body">
+		  {% if score > 10 %}
          <div class="row">
 	         <div class='col-md-6'>
 	               <div class="form-group">
@@ -100,6 +101,12 @@
          <div><br></div>
          <input type="submit" class="btn btn-primary" value="Submit" onclick="postQuestion()" >
          <div id="output" class="panel-heading"></div>
+		  {%else%}
+		  <div>
+			  <p>you don't have enough credit! Answer some other people's questions and come by later :)</p>
+			  <p><a href="/questionsfeed/">Your feed</a></p>
+		  </div>
+		  {%endif%}
       </div>
    </div>
 </div>
@@ -115,6 +122,20 @@
       };
       date_input.datepicker(options);
     })
+
+    var dateToday = new Date();
+	var dates = $("#date").datepicker({
+    defaultDate: "+1w",
+    changeMonth: true,
+    numberOfMonths: 3,
+    minDate: dateToday,
+    onSelect: function(selectedDate) {
+        var option = "minDate",
+            instance = $(this).data("datepicker"),
+            date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+        dates.not(this).datepicker("option", option, date);
+    }
+});
 </script>
 <script type="text/javascript">
 			var CSRF_TOKEN = '{{ csrf_token }}';
