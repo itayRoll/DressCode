@@ -44,13 +44,38 @@ def post_question(request):
 # pass
 # else:
 
-def filter_questions(request):
+def filter_questions_page(request):
     clothingItems = [x[1] for x in ClothingItem.TYPES]
     colors = [x[1] for x in ClothingItem.COLORS]
     patterns = [x[1] for x in ClothingItem.PATTERN]
-    genders = [x[1] for x in Fuser.GENDERS]
     return render(request, 'dresscodeapp/filterquestions.html',
-                  {'clothingItems': clothingItems, 'colors': colors, 'patterns': patterns, 'genders': genders})
+                  {'clothingItems': clothingItems, 'colors': colors, 'patterns': patterns})
+    
+
+def return_filtered_results(request):
+	curr_username = request.user.username
+	answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
+	questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
+	questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids)
+        
+	gender = request.POST.get('gender')
+	list_by_gender = Fuser.objects.filter(gender=gender)
+	questions_feed = Question.objects.filter(user__in=list_by_gender)
+	items_tmp = request.POST.get('items_lst')
+	all_items = items_tmp.split("#")    
+    
+	for item in all_items:
+		sub_items = item.split(",")
+		#need to add filter by items
+	questions_feed=Question.objects.order_by('-published_date')[:2]
+    
+        
+	items_dict = {}
+	for question in questions_feed:
+		items_dict[question.pk] = []
+        items_dict[question.pk] = [val for val in question.clothing_items.all()]
+	return render(request, 'dresscodeapp/filteredresults.html', {'questions': questions_feed})
+
 
 
 def question_page(request, q_pk):
@@ -79,6 +104,7 @@ def post_answer(request):
     return HttpResponse('succes')
 
 def find_spammer_by_answer(question_id, asker_id, answerer_id):
+	return
     
 
 
