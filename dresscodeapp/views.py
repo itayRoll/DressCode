@@ -1,13 +1,17 @@
 import json
+import os
 
+from django.core.files.base import ContentFile
 from django.shortcuts import render
 from django.http import HttpResponse
+
 from models import *
-from datetime import datetime, timedelta
+from datetime import datetime
 
 USER_SCORE_FOR_NEW_ANSWER = 1
 USER_SCORE_FOR_NEW_QUESTION = 7
 MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Create your views here.
@@ -29,32 +33,30 @@ def filter_questions_page(request):
     patterns = [x[1] for x in ClothingItem.PATTERN]
     return render(request, 'dresscodeapp/filterquestions.html',
                   {'clothingItems': clothingItems, 'colors': colors, 'patterns': patterns})
-    
+
 
 def return_filtered_results(request):
-	curr_username = request.user.username
-	answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
-	questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
-	questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids)
-        
-	gender = request.POST.get('gender')
-	list_by_gender = Fuser.objects.filter(gender=gender)
-	questions_feed = Question.objects.filter(user__in=list_by_gender)
-	items_tmp = request.POST.get('items_lst')
-	all_items = items_tmp.split("#")    
-    
-	for item in all_items:
-		sub_items = item.split(",")
-		#need to add filter by items
-	questions_feed=Question.objects.order_by('-published_date')[:2]
-    
-        
-	items_dict = {}
-	for question in questions_feed:
-		items_dict[question.pk] = []
-        items_dict[question.pk] = [val for val in question.clothing_items.all()]
-	return render(request, 'dresscodeapp/filteredresults.html', {'questions': questions_feed})
+    curr_username = request.user.username
+    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
+    questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
+    questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids)
 
+    gender = request.POST.get('gender')
+    list_by_gender = Fuser.objects.filter(gender=gender)
+    questions_feed = Question.objects.filter(user__in=list_by_gender)
+    items_tmp = request.POST.get('items_lst')
+    all_items = items_tmp.split("#")
+
+    for item in all_items:
+        sub_items = item.split(",")
+        # need to add filter by items
+    questions_feed = Question.objects.order_by('-published_date')[:2]
+
+    items_dict = {}
+    for question in questions_feed:
+        items_dict[question.pk] = []
+    items_dict[question.pk] = [val for val in question.clothing_items.all()]
+    return render(request, 'dresscodeapp/filteredresults.html', {'questions': questions_feed})
 
 
 def question_page(request, q_pk):
@@ -125,7 +127,6 @@ def update_spammer_credit(id):
     user.save()
 
 
-
 def get_questions_feed(request):
     curr_username = request.user.username
     answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
@@ -140,15 +141,32 @@ def get_questions_feed(request):
     # user will not answer same question twice
     questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids).order_by(
         '-published_date')[:2]
-    items_dict = {}
-    for question in questions_feed:
-        items_dict[question.pk] = []
-        items_dict[question.pk] = [val for val in question.clothing_items.all()]
     return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
 
 
 def post_question(request):
-    photo_path = request.POST.get('path')
+    # upload image from user
+    folder = os.path.join('dresscodeapp', 'static', 'user_images', request.user.username)
+    uploaded_filename = request.FILES['photos'].name
+
+    # create the folder if it doesn't exist.
+    try:
+        os.mkdir(os.path.join(BASE_DIR, folder))
+    except:
+        pass
+
+    # save the uploaded file inside that folder.
+    full_filename = os.path.join(BASE_DIR, folder, uploaded_filename)
+    fout = open(full_filename, 'wb+')
+
+    file_content = ContentFile(request.FILES['photos'].read())
+
+    # Iterate through the chunks.
+    for chunk in file_content.chunks():
+        fout.write(chunk)
+    fout.close()
+
+    photo_path = os.path.join('user_images', request.user.username, uploaded_filename)
     title = request.POST.get('title')
     description = request.POST.get('description')
     date = request.POST.get('date')

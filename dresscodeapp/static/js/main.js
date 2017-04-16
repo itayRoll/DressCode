@@ -4,10 +4,9 @@ function postAnswer(questionId, vote, userScore){
 	// add loading animation to button
 	$('#thanks'+questionId).show()
 	$('#question'+questionId).hide()
-    var itemsNotAsPic = true
-	if ($('#checkbox'+questionId).checked) {
-        itemsNotAsPic = false
-        alert("checked");
+    var itemsNotAsPic = false
+	if ($('#checkbox'+questionId)[0].checked) {
+        itemsNotAsPic = true
 	}
 	$('#thanks'+questionId).fadeOut(1000)
 	var numOfVisibleRows = $('#questions_table tr:visible').length
@@ -43,8 +42,8 @@ function reload() {
 }
 
 function postQuestion(){
-    var photo_path = document.getElementById("pic").value;
-    var photo = document.getElementById("pic").files; // somehow upload the photo to the server....
+    var photo = document.getElementById("pic").files[0];
+
     var e = document.getElementById("title")
     var title =  e.options[e.selectedIndex].value;
     var description =  document.getElementById("comment").value;
@@ -72,18 +71,21 @@ function postQuestion(){
             }
     }
 
+    var data = new FormData();
+    data.append('photos', photo)
+    data.append('title', title)
+    data.append('description', description)
+    data.append('date', date)
+    data.append('items_lst', items_lst)
+    data.append('csrfmiddlewaretoken', CSRF_TOKEN)
+
     $.ajax({
 				url: "/post-question/",
 				type: 'POST',
 				method: 'POST',
-				data: {
-					'title': title,
-					'path': photo_path,
-					'description': description,
-					'date': date,
-					'items_lst': items_lst,
-					csrfmiddlewaretoken: CSRF_TOKEN
-				},
+				data: data,
+				contentType: false,
+                processData: false,
 			success: function(response) {
   				result = JSON.parse(response);  // Get the results sended from ajax to here
   				if (result.error) {
@@ -101,8 +103,6 @@ var numOfItems = 0
 function addClothingItemRow() {
     numOfItems = numOfItems+1
     $('#items').find('tbody').append('<tr><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Item</option><option>T-Shirt</option><option>Shirt</option><option>Hoodie</option><option>Hoodie</option><option>Suit</option><option>Short Pants</option><option>Jeans</option><option>Pants</option><option>Dress</option><option>Skirt</option><option>Shoes</option><option>Swim Suit</option><option>Hat</option></select></td><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Color</option><option>Blue</option><option>Red</option><option>Black</option><option>White</option><option>Purple</option><option>Green</option><option>Yellow</option><option>Brown</option><option>Grey</option></select></td><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Pattern</option><option>None</option><option>Stripes</option><option>Dots</option><option>Checked</option></select></td><td class="col-md-2"><button class="btn btn-warning" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button></td><td class="col-md-2"><button class="btn btn-warning" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button></td></tr>');
-    //$('#clothing-items').append('<tr><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Item</option><option>T-Shirt</option><option>Shirt</option><option>Hoodie</option><option>Hoodie</option><option>Suit</option><option>Short Pants</option><option>Jeans</option><option>Pants</option><option>Dress</option><option>Skirt</option><option>Shoes</option><option>Swim Suit</option><option>Hat</option></select></td><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Color</option><option>Blue</option><option>Red</option><option>Black</option><option>White</option><option>Purple</option><option>Green</option><option>Yellow</option><option>Brown</option><option>Grey</option></select></td><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Pattern</option><option>None</option><option>Stripes</option><option>Dots</option><option>Checked</option></select></td><td class="col-md-2"><button class="btn btn-warning" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button></td><td class="col-md-2"><button class="btn btn-warning" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button></td></tr>');
-	$('#output').text(numOfItems)
 }
 
 function removeClothingItemRow(e){
