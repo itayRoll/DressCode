@@ -56,10 +56,8 @@
                             {%endif%}</p>
                         </div>
                         <div>
-                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src={{
-                                 question.photo_path }}
-                                 alt=""
-                                 class="homeImage"/>
+                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
+                                 class="homeImage" style="width: 50%; height: 50%"/>
                         </div>
                         <div>
                             <p><br></p>
