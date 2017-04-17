@@ -1,8 +1,4 @@
 <html>
-
-
-
-
 <head>
     {% load staticfiles %}
     <title>DressCode</title>
@@ -24,73 +20,45 @@
 
     </script>
     
-    <style>
-/* Add a black background color to the top navigation */
-.topnav {
-    background-color: #333;
-    overflow: hidden;
-}
-
-/* Style the links inside the navigation bar */
-.topnav a {
-    float: left;
-    display: block;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-}
-
-/* Change the color of links on hover */
-.topnav a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-/* Add a color to the active/current link */
-.topnav a.active {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.right {
-    text-align: right;
-    float: right;
-}
-
-
-h1 { color: #d54d7b; font-family: "Great Vibes", cursive; font-size: 135px; line-height: 130px; font-weight: normal; margin-bottom: 0px; margin-top: 0px; text-align: center; text-shadow: 0 1px 1px #fff; }
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open Sans">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+h1,h2,h3,h4,h5,h6 {font-family: "Oswald"}
+body {font-family: "Open Sans"}
+footer {background: black;color:white; align-text padding: 10px; text-align: center;}
 </style>
+<body class="w3-light-grey">
+
+
+  
+<!-- w3-content defines a container for fixed size centered content, 
+and is wrapped around the whole page content, except for the footer in this example -->
+<div class="w3-content" style="max-width:1600px">
+
+  <!-- Header -->
+  <header class="w3-container w3-center w3-padding-48 w3-white">
+    <h1 class="w3-xxxlarge"><b>DressCode</b></h1>
+    <h6>let the crowed help you <span class="w3-tag">look better</span></h6>
+  </header>
+
+  <!-- Image header -->
+  <header class="w3-display-container w3-wide" id="home">
+    <img class="w3-image" src="http://i.imgur.com/Ij5Z3MB.jpg" alt="Fashion Blog" width="1600" height="1060">
+    <div class="w3-display-left w3-padding-large">
+      <h1 class="w3-text-white">START</h1>
+      <h1 class="w3-jumbo w3-text-white w3-hide-small"><b>COLLABORATING</b></h1>
+      <h6><button class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('sign in').style.display='block'">SIGN IN</button></h6>
+      <h6><button class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('login').style.display='block'">LOG IN</button></h6>
+    </div>
+  </header>
     
 </head>
 <body>
-<div class="page-header">
-  <h1> DressCode</h1>
-<div class="topnav" id="myTopnav">
 
-  <a href="#Home">Home</a>
-  <a href="#Ask question">Ask question</a>
-  <a href="#Review questions">Review questions</a>
-  <a href="#Filter looks">Filter looks</a>
-  <div class="right">
-  <a href="#">Hello {{ request.user.username }}!</a>
-   <a href="#">Setting</a>
-  <a href="#">Logout</a>
-  </div>
-  
-</div>
-</div>
-
-<div id="main" class="content container">
-    <div class="row col-md-8">
-        {% block content %}
-        {% endblock %}
-    </div>
-</div>
-<!-- <div class="page-ender">
-    add social media links
-</div> -->
 </body>
+
+<footer><br>Copyright &copy; DressCode<br><br></footer>
 </html>

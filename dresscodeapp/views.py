@@ -50,6 +50,10 @@ def return_filtered_results(request):
     for item in all_items:
         sub_items = item.split(",")
         # need to add filter by items
+        for question in questions_feed:
+            question_items = [val for val in question.clothing_items.all()]
+            if sub_items not in question_items:
+                questions_feed = Question.objects.exclude(pk=question.pk)
     questions_feed = Question.objects.order_by('-published_date')[:2]
 
     items_dict = {}
