@@ -27,5 +27,10 @@ urlpatterns = [
     url(r'^post-question/$', views.post_question, name='post_question'),
     url(r'^question/post/$', views.post_question_page, name='post_question_page'),
     url(r'^questionsfeed/$', views.get_questions_feed, name='get_questions_feed'),
+    url(r'^myresults/$', views.get_results, name='get_results'),
+    url(r'^view-result/$', views.view_result, name='view_result'),
+    url(r'^view-result-filter/(?P<q_pk>\d+)/(?P<gender>[f|m|u])/(?P<minage>\d+)/(?P<maxage>\d+)/$', views.view_question_with_filters, name='view_question_with_filters'),
+    url(r'^question-result/(?P<q_pk>\d+)/$', views.view_question, name='view_question'),
     # url(r'^ask/$', views.post_question, name='post_question'),
+
 ]

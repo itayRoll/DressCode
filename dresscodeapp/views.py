@@ -200,3 +200,94 @@ def post_question(request):
     user.score -= USER_SCORE_FOR_NEW_QUESTION
     user.save()
     return HttpResponse(json.dumps({'success': True}))
+
+
+def get_results(request):
+    curr_username = request.user.username
+    # user cant answer his own question, questions with past due date are irrelevant
+    questions_feed = Question.objects.filter(user__user__username=curr_username)
+
+    return render(request, 'dresscodeapp/results.html', {'questions': questions_feed})
+
+
+def view_result(request):
+    question_pk = request.POST['question_id']
+    gender = request.POST.get('gender')
+    min = request.POST.get('minAge')
+    max = request.POST.get('maxAge')
+    if gender == "Female":
+        gender = 'f'
+    elif gender == "Male":
+        gender = 'm'
+    else:
+        gender = 'u'
+
+    return HttpResponse(
+        json.dumps({'success': True, 'q_id': question_pk, 'gender': gender, 'minAge': min, 'maxAge': max}))
+
+
+def view_question(request, q_pk):
+    question = Question.objects.get(pk=q_pk)
+    answers = Answer.objects.filter(question_id=q_pk)
+
+    # we will not negotiate with terrorists!!
+    answers = Answer.objects.filter(pk__in=answers).exclude(user__spammer=True)
+    fit, no_fit, partial_fit = get_answers_rate(answers)
+
+    return render(request, 'dresscodeapp/question-result.html',
+                  {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit, 'filter': False})
+
+
+def view_question_with_filters(request, q_pk, gender, minage, maxage):
+    question = Question.objects.get(pk=q_pk)
+
+    if gender == 'u' and minage == '0' and maxage == '0':
+        return view_question(request, q_pk)
+
+    if gender != 'u':
+        relevant_users = Fuser.objects.filter(gender=gender)
+
+    this_year = datetime.now().year
+    minage = int(minage)
+    maxage = int(maxage)
+    max_year = this_year
+    min_year = this_year
+
+    if minage != 0:
+        max_year = this_year - minage
+
+    if maxage != 0:
+        min_year = this_year - maxage
+
+    if minage != 0 and maxage != 0 and max_year < min_year:  # swap years, user got confused...
+        tmp = min_year
+        min_year = max_year
+        max_year = tmp
+
+    min_date = datetime.date(min_year, 1, 1)
+    max_date = datetime.date(max_year, 12, 31)
+
+    """
+        exclude users from relevant_users by birthdate..
+        can't find this field of user...
+    """
+    #if minage != 0:
+       #relevant_users = Fuser.objects.filter(pk_in=relevant_users, gender=gender)
+
+    answers = Answer.objects.filter(question_id=q_pk, user__in=relevant_users)
+
+    # we will not negotiate with terrorists!!
+    answers = Answer.objects.filter(pk__in=answers).exclude(user__spammer=True)
+    fit, no_fit, partial_fit = get_answers_rate(answers)
+
+    return render(request, 'dresscodeapp/question-result.html',
+                  {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit, 'filter': True,
+                   'gender': gender})
+
+
+def get_answers_rate(answers):
+    answers_fit = Answer.objects.filter(pk__in=answers, vote='1')
+    answers_no_fit = Answer.objects.filter(pk__in=answers, vote='2')
+    answers_partial_fit = Answer.objects.filter(pk__in=answers, vote='0')
+
+    return len(answers_fit), len(answers_no_fit), len(answers_partial_fit)

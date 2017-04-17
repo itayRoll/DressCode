@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <title>DressCode</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
+    <link href="//fonts.googleapis.com/css?family=Ubuntu+Condensed&subset=latin,latin-ext" rel="stylesheet"
+          type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Quicksand&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Bungee+Inline&subset=latin,latin-ext" rel="stylesheet"
+          type="text/css">
+    <!-- <link rel="stylesheet" href="{% static 'css/casino.css' %}"> -->
+    <script src="https://www.google.com/jsapi"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">google.load('visualization', '1.0', {'packages':['corechart']});</script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/chart.js' %}"></script>
+    <script type="text/javascript">
+			var CSRF_TOKEN = '{{ csrf_token }}';
+    </script>
+
+    <script type="text/javascript">
+        var fit = "{{ fit }}"
+        var n_fit = "{{ no_fit }}"
+        var p_fit = "{{ partial_fit }}"
+        var filter = "{{ filter }}"
+        google.setOnLoadCallback(function() { drawChart(fit, n_fit, p_fit, filter); });
+    </script>
+</head>
+<body>
+<div class="page-header">
+    <h1><a href="#">DressCode</a></h1>
+    <nav class="nav">
+        <ul>
+            <li>
+                <a href="#">{{ request.user.username }}</a>
+                <ul>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="#">Settings</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div id="main" class="content container">
+    <div class="row col-md-8">
+        {% block content %}
+        <div id="results" class="question_container">
+            <table id="results_table">
+                <tr>
+                    <td id="question{{ question.pk }}">
+                        <div>
+                            <h3><b>{{ question.title }} </b></h3>
+                            <h5>{{ question.description }} </h5>
+                            <p> {{ question.due_date }} </p>
+                        </div>
+                        <div>
+                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;"
+                                 src="{% static question.photo_path %}" alt=""
+                                 class="homeImage" style="width: 50%; height: 50%"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {% if filter == True%}
+                            <h3><b>Filtered Results- </b></h3>
+                            {% if gender and gender == "f"%}
+                                <div id="genderdiv">Gender: Female</div>
+                            {% elif gender and gender == "m"%}
+                                <div id="genderdiv">Gender: Male</div>
+                            {% endif %}
+                        {% else %}
+                            <h3><b>Results- </b></h3>
+                        {% endif %}
+                        <div id="pie" style="width: 900px; height: 500px;"></div>
+                        <div id="nopie"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h5><b>Filter Results- </b></h5>
+                        Gender:
+                        <select class="form-control" id="gender">
+                            <option value="" selected disabled>Select</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                        Minimum age:
+                        <select class="form-control" id="minAge">
+                            <option value="" selected disabled>Select</option>
+                        </select>
+                        Maximim age:
+                        <select class="form-control" id="maxAge">
+                            <option value="" selected disabled>Select</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" class="btn btn-primary" value="Submit"
+                               onclick="filterResults({{ question.pk }})">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>

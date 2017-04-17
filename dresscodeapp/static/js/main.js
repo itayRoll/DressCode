@@ -103,3 +103,66 @@ function post(path, params, method) {
     document.body.appendChild(form);
     form.submit();
 }
+
+function viewResults(questionId){
+	$.ajax({
+				url: "/view-result/",
+				type: 'POST',
+				data: {
+					'question_id': questionId,
+					csrfmiddlewaretoken: CSRF_TOKEN,
+				},
+			success: function(response) {
+  				result = JSON.parse(response);  // Get the results sended from ajax to here
+  				if (result.error) {
+      				// Error
+      				alert(result.error_text);
+  				} else {
+              		//alert("Your question was posted successfully!\nLet's answer other users questions!")
+              		window.location.replace("/question-result/"+result["q_id"]);
+      			}
+  			}
+		});
+}
+
+function filterResults(questionId){
+    var e = document.getElementById('gender')
+    var gender = e.options[e.selectedIndex].value;
+    if (gender == "") {
+        gender = "u"
+    }
+
+    e = document.getElementById('minAge')
+    var min = e.options[e.selectedIndex].value;
+    if (min == "") {
+        min = "0"
+    }
+
+     e = document.getElementById('maxAge')
+    var max = e.options[e.selectedIndex].value;
+    if (max == "") {
+        max = "0"
+    }
+
+	$.ajax({
+				url: "/view-result/",
+				type: 'POST',
+				data: {
+				    'minAge': min,
+				    'maxAge': max,
+				    'gender':gender,
+					'question_id': questionId,
+					csrfmiddlewaretoken: CSRF_TOKEN,
+				},
+			success: function(response) {
+  				result = JSON.parse(response);  // Get the results sended from ajax to here
+  				if (result.error) {
+      				// Error
+      				alert(result.error_text);
+  				} else {
+              		//alert("Your question was posted successfully!\nLet's answer other users questions!")
+              		window.location.replace("/view-result-filter/"+result["q_id"]+"/"+result["gender"]+"/"+result["minAge"]+"/"+result["maxAge"]+"/");
+      			}
+  			}
+		});
+}
