@@ -1,0 +1,66 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <title>DressCode</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/postQuestion.js' %}"></script>
+    <script type="text/javascript">
+			var CSRF_TOKEN = '{{ csrf_token }}';
+
+    </script>
+    
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open Sans">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+h1,h2,h3,h4,h5,h6 {font-family: "Oswald"}
+body {font-family: "Open Sans"}
+footer {background: black;color:white; align-text padding: 10px; text-align: center;}
+</style>
+<body class="w3-light-grey">
+
+<!-- Navigation bar with social media icons -->
+<div class="w3-bar w3-black w3-hide-small">
+  <a href="/" class="w3-bar-item w3-button">Home</a>
+  <a href="/question/post" class="w3-bar-item w3-button">Ask question</a>
+  <a href="/questionsfeed" class="w3-bar-item w3-button">Answer questions</a>
+  <a href="/filterquestions" class="w3-bar-item w3-button">Filter top looks</a>
+
+  <a class="w3-bar-item w3-button w3-right">Hello {{ request.user.username }}!</a>
+</div>
+  
+<!-- w3-content defines a container for fixed size centered content, 
+and is wrapped around the whole page content, except for the footer in this example -->
+<div class="w3-content" style="max-width:1600px">
+
+  <!-- Header -->
+  <header class="w3-container w3-center w3-padding-48 w3-white">
+    <h1 class="w3-xxxlarge"><b>DressCode</b></h1>
+    <h6>let the crowed help you <span class="w3-tag">look better</span></h6>
+  </header>
+    
+</head>
+
+
+<div id="main" class="content container">
+    <div class="row col-md-8">
+    <br>
+        {% block content %}
+        {% endblock %}
+    <br>
+    </div>
+</div>
+</body>
