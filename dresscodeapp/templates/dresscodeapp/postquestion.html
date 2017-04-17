@@ -2,8 +2,7 @@
 
 {% block content %}
 <div class="container">
-   <div class="panel panel-primary">
-      <div class="panel-heading"></div>
+   <div class="panel panel-default">
       <div class="panel-body">
 		  {% if score > 10 %}
          <div class="row">
@@ -87,10 +86,9 @@
 							 </select>
 						</td>
 						<td class='col-md-2'>
-							<button class="btn btn-warning" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button>
-						</td>
-						<td class='col-md-2'>
-							<button class="btn btn-warning" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button>
+							<button class="btn btn" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button>
+ 
+							<button class="btn btn" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button>
 						</td>
 				 </tr>
 				 </table>
@@ -99,7 +97,9 @@
 		  <br>
          <input type="file" id="pic" name="pic" accept="image/*">
          <div><br></div>
-         <input type="submit" class="btn btn-primary" value="Submit" onclick="postQuestion()" >
+         <div style="text-align:center"> 
+         <input type="submit" class="btn btn-success  btn-lg" value="Submit" onclick="postQuestion()" >
+         </div>
 		  {%else%}
 		  <div>
 			  <p>you don't have enough credit! Answer some other people's questions and come by later :)</p>

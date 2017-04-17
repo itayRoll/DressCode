@@ -1,89 +1,101 @@
 {%  extends 'dresscodeapp/template.html' %}
-<!DOCTYPE html>
-<html lang="en">
 
-
-<body>
 
 {% block content %}
-<div class="container">
-   <div class="panel panel-primary">
-      <div class="panel-heading"></div>
-      <div class="panel-body">
+		<div class="container">
+			<div class="panel panel-default">
+				<div class="panel-body">
 
-         <div id="clothing-items">
-         <p><b>Choose clothing items to filter on:</b></p>
-			 <table id="items">
-				 <tr>
-					<td class='col-md-2'>
-						<select class="form-control">
-							<option value="" selected disabled>Item</option>
+					<div id="clothing-items">
+						<p>
+							<b>Choose clothing items to filter on:</b>
+						</p>
+						<table id="items">
+							<tr>
+								<td class='col-md-2'>
+									<select class="form-control">
+										<option value="" selected disabled>Item</option>
 							{% for item in clothingItems %}  
-							<option>{{item}}</option>
+										<option>{{item}}</option>
 							{%endfor%}
-						  </select>
-						</td>
-						<td class='col-md-2'>
-							<select class="form-control">
-								<option value="" selected disabled>Color</option>
+									</select>
+								</td>
+								<td class='col-md-2'>
+									<select class="form-control">
+										<option value="" selected disabled>Color</option>
 								{% for color in colors %}  
-								<option>{{color}}</option>
+										<option>{{color}}</option>
 								{%endfor%}
-							  </select>
-						</td>
-						<td class='col-md-2'>
-							<select class="form-control">
-								<option value="" selected disabled>Pattern</option>
+									</select>
+								</td>
+								<td class='col-md-2'>
+									<select class="form-control">
+										<option value="" selected disabled>Pattern</option>
 								{% for pattern in patterns%}
-								<option>{{pattern}}</option>
+										<option>{{pattern}}</option>
 								{%endfor%}
-							 </select>
-						</td>
-						<td class='col-md-2'>
-							<button class="btn btn-warning" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button>
-						</td>
-						<td class='col-md-2'>
-							<button class="btn btn-warning" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button>
-						</td>
-				 </tr>
+									</select>
+								</td>
+								<td class='col-md-2'>
+									<button class="btn btn" type="button" onclick="addClothingItemRow()">
+										<span class="glyphicon glyphicon-plus"/>
+									</button>
+									<button class="btn btn" type="button" onclick="removeClothingItemRow(this)">
+										<span class="glyphicon glyphicon-minus"/>
+									</button>
+								</td>
+							</tr>
 
-				 </table>
-			 </div>
-		  <br>
-         <div><br></div>
-          <p><b>Choose gender to filter on:</b></p>
- <div class="col-md-6">
-               <div class="form-group">
-                  <select id="gender" class="form-control">
-							<option value="" selected disabled>Gender</option>
-							<option>Male</option>
-							<option>Female</option>
-							<option>Unknowen</option>
-				  </select>
-               </div>
-            </div>
-						<div><br></div>
-		  <br>
-		   <div><br></div>
-         <input type="submit" class="btn btn-primary" value="Filter questions" onclick="filterQuestions()" >
-         <div id="output" class="panel-heading"></div>
-      </div>
-   </div>
-</div>
-<script>
-    $(document).ready(function(){
-      var date_input=$('input[name="date"]'); //our date input has the name "date"
-      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-      var options={
-        format: 'mm/dd/yyyy',
-        container: container,
-        todayHighlight: true,
-        autoclose: true,
-      };
-      date_input.datepicker(options);
-    })
-</script>
-<script type="text/javascript">
+						</table>
+					</div>
+					<br>
+						<div>
+							<br>
+							</div>
+							<p>
+								<b>Choose gender to filter on:</b>
+							</p>
+							<div class="col-md-6">
+								<div class="form-group">
+									<select id="gender" class="form-control">
+										<option value="" selected disabled>Gender</option>
+										<option>Male</option>
+										<option>Female</option>
+										<option>Unknowen</option>
+									</select>
+								</div>
+							</div>
+							<div>
+								<br>
+								</div>
+								<br>
+									<div>
+										<br>
+										</div>
+										<div style="text-align:center"> 
+										<input type="submit" class="btn btn-success  btn-lg" value="Filter questions" onclick="filterQuestions()" >
+										</div>  
+											<div id="output" class="panel-heading"/>
+
+
+											<script>
+								$(document).ready(function(){
+								  var date_input=$('input[name="date"]'); //our date input has the name "date"
+								  var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+								  var options={
+									format: 'mm/dd/yyyy',
+									container: container,
+									todayHighlight: true,
+									autoclose: true,
+								  };
+								  date_input.datepicker(options);
+								})
+											</script>
+											<script type="text/javascript">
 			var CSRF_TOKEN = '{{ csrf_token }}';
-</script>
-{% endblock %}
+											</script>
+										</div>
+									</div>
+								</div>
+						{% endblock %}
+						

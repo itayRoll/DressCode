@@ -32,7 +32,15 @@ footer {background: black;color:white; align-text padding: 10px; text-align: cen
 </style>
 <body class="w3-light-grey">
 
+<!-- Navigation bar with social media icons -->
+<div class="w3-bar w3-black w3-hide-small">
+  <a href="/" class="w3-bar-item w3-button">Home</a>
+  <a href="/question/post" class="w3-bar-item w3-button">Ask question</a>
+  <a href="/questionsfeed" class="w3-bar-item w3-button">Answer questions</a>
+  <a href="/filterquestions" class="w3-bar-item w3-button">Filter top looks</a>
 
+  <a class="w3-bar-item w3-button w3-right">Hello {{ request.user.username }}!</a>
+</div>
   
 <!-- w3-content defines a container for fixed size centered content, 
 and is wrapped around the whole page content, except for the footer in this example -->

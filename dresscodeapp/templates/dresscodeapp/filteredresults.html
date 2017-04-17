@@ -2,73 +2,89 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<body>
+	<body>
 
-<div id="main" class="content container">
-    <div class="row col-md-8">
+		<div id="main" class="content container">
+			<div class="row col-md-8">
         {% block content %}
         {%if questions %}
-        <div id="feed" class="question_container">
-            <table id="questions_table">
-                <tr>
+				<div id="feed" class="question_container">
+					<table id="questions_table">
+						<tr>
                     {% for question in questions%}
-                    <td id="question{{ question.pk }}">
-                        <div>
-                            <h3><b>{{ question.title }} </b></h3>
-                            <h5>{{ question.description }} </h5>
-                            <p> {{ question.due_date }} </p>
-                            <p>{% if question.clothing_items%}
+							<td id="question{{ question.pk }}">
+								<div>
+									<h3>
+										<b>{{ question.title }} </b>
+									</h3>
+									<h5>{{ question.description }} </h5>
+									<p> {{ question.due_date }} </p>
+									<p>{% if question.clothing_items%}
                             {% for clothing_item in question.clothing_items.all %}
-                                    <li>{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</li>
+										<li>{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</li>
                             {% endfor %}
                             {%endif%}</p>
-                        </div>
-                        <div>
-                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src={{
+								</div>
+								<div>
+									<img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src={{
                                  question.photo_path }}
                                  alt=""
                                  class="homeImage"/>
-                        </div>
-                        <div>
-                            <p><br></p>
-                            <div class="checkbox">
-                              <label><input type="checkbox" value="" id="checkbox{{ question.pk }}">Clothing items don't fit the photo</label>
-                            </div>
-                            <p><br></p>
-                            <button id="yay{{ question.pk }}" type="button" class="btn btn-success"
-                                    onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})"><span
-                                    class="glyphicon glyphicon-thumbs-up"></span></button>
-                            <button id="meh{{ question.pk }}" type="button" class="btn"
-                                    onclick="postAnswer({{ question.pk }}, 0, {{ question.user.score }})"><span
-                                    class="glyphicon glyphicon-minus"></span></button>
-                            <button id="nay{{ question.pk }}" type="button" class="btn btn-danger"
-                                    onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})"><span
-                                    class="glyphicon glyphicon-thumbs-down"></span></button>
-                            <!-- <p> <br> </p> -->
-                        </div>
-                    </td>
-                    <td id="thanks{{ question.pk }}" hidden="true">
-                        <div id="msg{{ question.pk }}" class="panel panel-info"
+								</div>
+								<div>
+									<p>
+										<br>
+										</p>
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" value="" id="checkbox{{ question.pk }}">Clothing items don't fit the photo</label>
+											</div>
+											<p>
+												<br>
+												</p>
+												<button id="yay{{ question.pk }}" type="button" class="btn btn-success"
+                                    onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})">
+													<span
+                                    class="glyphicon glyphicon-thumbs-up">
+													</span>
+												</button>
+												<button id="meh{{ question.pk }}" type="button" class="btn"
+                                    onclick="postAnswer({{ question.pk }}, 0, {{ question.user.score }})">
+													<span
+                                    class="glyphicon glyphicon-minus">
+													</span>
+												</button>
+												<button id="nay{{ question.pk }}" type="button" class="btn btn-danger"
+                                    onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})">
+													<span
+                                    class="glyphicon glyphicon-thumbs-down">
+													</span>
+												</button>
+												<!-- <p> <br> </p> -->
+											</div>
+										</td>
+										<td id="thanks{{ question.pk }}" hidden="true">
+											<div id="msg{{ question.pk }}" class="panel panel-info"
                              style="width: 160px; text-align: center;">
-                            <div id="msgText{{ question.pk }}" class="panel-heading"></div>
-                        </div>
-                    </td>
-                    <br/>
-                </tr>
+												<div id="msgText{{ question.pk }}" class="panel-heading"/>
+											</div>
+										</td>
+										<br/>
+									</tr>
                 {%endfor%}
-                </tr>
-            </table>
+								</tr>
+							</table>
             {%else %}
-            <div> no new questions for you! ask your own!</div>
+							<div> no new questions for you! ask your own!</div>
             {%endif%}
             {% endblock %}
-            <div>
-                <button id="reload" type="button" class="btn" style="display: none;"
+							<div>
+								<button id="reload" type="button" class="btn" style="display: none;"
                         onclick="reload()">Load more Looks!</button>
 
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-</html>
+							</div>
+						</div>
+					</div>
+				</div>
+			</body>
+		</html>
