@@ -51,22 +51,16 @@ and is wrapped around the whole page content, except for the footer in this exam
     <h1 class="w3-xxxlarge"><b>DressCode</b></h1>
     <h6>let the crowed help you <span class="w3-tag">look better</span></h6>
   </header>
-
-  <!-- Image header -->
-  <header class="w3-display-container w3-wide" id="home">
-    <img class="w3-image" src="http://i.imgur.com/Ij5Z3MB.jpg" alt="Fashion Blog" width="1600" height="1060">
-    <div class="w3-display-left w3-padding-large">
-      <h1 class="w3-text-white">START</h1>
-      <h1 class="w3-jumbo w3-text-white w3-hide-small"><b>COLLABORATING</b></h1>
-      <h6><button class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('sign in').style.display='block'">SIGN IN</button></h6>
-      <h6><button class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('login').style.display='block'">LOG IN</button></h6>
-    </div>
-  </header>
     
 </head>
-<body>
 
+
+<div id="main" class="content container">
+    <div class="row col-md-8">
+    <br>
+        {% block content %}
+        {% endblock %}
+    <br>
+    </div>
+</div>
 </body>
-
-<footer><br>Copyright &copy; DressCode<br><br></footer>
-</html>
