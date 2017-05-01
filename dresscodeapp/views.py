@@ -278,7 +278,7 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
         can't find this field of user...
     """
     #if minage != 0:
-       #relevant_users = Fuser.objects.filter(pk_in=relevant_users, gender=gender)
+       #relevant_users = Fuser.objects.filter(pk__in=relevant_users, gender=gender)
 
     answers = Answer.objects.filter(question_id=q_pk, user__in=relevant_users)
 
