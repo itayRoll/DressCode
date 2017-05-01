@@ -19,50 +19,70 @@
     <script type="text/javascript">
 			var CSRF_TOKEN = '{{ csrf_token }}';
     </script>
+    
+    <style>
+    .btn-custom {
+  background-color: hsl(307, 0%, 3%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3a3a3a", endColorstr="#070707");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#3a3a3a), to(#070707));
+  background-image: -moz-linear-gradient(top, #3a3a3a, #070707);
+  background-image: -ms-linear-gradient(top, #3a3a3a, #070707);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #3a3a3a), color-stop(100%, #070707));
+  background-image: -webkit-linear-gradient(top, #3a3a3a, #070707);
+  background-image: -o-linear-gradient(top, #3a3a3a, #070707);
+  background-image: linear-gradient(#3a3a3a, #070707);
+  border-color: #070707 #070707 hsl(307, 0%, -2%);
+  color: #fff !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33);
+  -webkit-font-smoothing: antialiased;
+}
+
+	</style>
 </head>
 <body>
 
 
-<div id="main" class="content container">
-    <div class="row col-md-8">
+<div id="main" class="content container" >
+    <div class="row">
         {% block content %}
         {%if questions %}
-        <div id="feed" class="question_container">
-            <table id="questions_table">
+        
+        <div id="feed" class="question_container" >
+            <table id="questions_table" >
                 <tr>
                     {% for question in questions%}
                     <td id="question{{ question.pk }}">
-                        <div>
+                        <div style="text-align:center"> 
                             <h3><b>{{ question.title }} </b></h3>
                             <h5>{{ question.description }} </h5>
-                            <p> {{ question.due_date }} </p>
                             <p>{% if question.clothing_items%}
                             {% for clothing_item in question.clothing_items.all %}
                                     <li>{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</li>
                             {% endfor %}
                             {%endif%}</p>
                         </div>
-                        <div>
+                        <div align="middle">
                             <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
-                                 class="homeImage" style="width: 50%; height: 50%"/>
+                                 class="img-thumbnail" style="width: 50%; height: 50%"/>
                         </div>
-                        <div>
+                        <div style="text-align:center">
                             <p><br></p>
                             <div class="checkbox">
                               <label><input type="checkbox" value="" id="checkbox{{ question.pk }}">Clothing items don't fit the photo</label>
                             </div>
                             <p><br></p>
-                            <button id="yay{{ question.pk }}" type="button" class="btn btn-success"
+                            <button id="yay{{ question.pk }}" type="button" class="btn-custom"
                                     onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})"><span
-                                    class="glyphicon glyphicon-thumbs-up"></span></button>
-                            <button id="meh{{ question.pk }}" type="button" class="btn"
-                                    onclick="postAnswer({{ question.pk }}, 0, {{ question.user.score }})"><span
-                                    class="glyphicon glyphicon-minus"></span></button>
-                            <button id="nay{{ question.pk }}" type="button" class="btn btn-danger"
+                                    class="glyphicon glyphicon-thumbs-up"></span><b> PERFECT MATCH!</b></button>
+                            <button id="meh{{ question.pk }}" type="button" class="btn-custom"
+                                    onclick="postAnswer({{ question.pk }}, 0, {{ question.user.score }})"> <b>MAYBE TO SOMEWHERE ELSE</b></button>
+                            <button id="nay{{ question.pk }}" type="button" class="btn-custom"
                                     onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})"><span
-                                    class="glyphicon glyphicon-thumbs-down"></span></button>
+                                    class="glyphicon glyphicon-thumbs-down"></span><b> DOESNT FIT</b></button>
                             <!-- <p> <br> </p> -->
                         </div>
+                        <br>
                     </td>
                     <td id="thanks{{ question.pk }}" hidden="true">
                         <div id="msg{{ question.pk }}" class="panel panel-info"
@@ -87,5 +107,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>

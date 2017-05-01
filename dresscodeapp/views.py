@@ -155,7 +155,7 @@ def post_question(request):
 
     # create the folder if it doesn't exist.
     try:
-        os.mkdir(os.path.join(BASE_DIR, folder))
+        os.makedirs(os.path.join(BASE_DIR, folder))
     except:
         pass
 
