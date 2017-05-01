@@ -262,14 +262,16 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
 
     if maxage != 0:
         min_year = this_year - maxage
+    else:
+        min_year = 1900
 
     if minage != 0 and maxage != 0 and max_year < min_year:  # swap years, user got confused...
         tmp = min_year
         min_year = max_year
         max_year = tmp
 
-    min_date = datetime.date(min_year, 1, 1)
-    max_date = datetime.date(max_year, 12, 31)
+    min_date = datetime(year=min_year, month=1, day=1)
+    max_date = datetime(year=max_year, month=12, day=31)
 
     """
         exclude users from relevant_users by birthdate..
