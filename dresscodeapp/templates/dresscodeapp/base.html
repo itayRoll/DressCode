@@ -30,16 +30,112 @@ h1,h2,h3,h4,h5,h6 {font-family: "Oswald"}
 body {font-family: "Open Sans"}
 footer {background: black;color:white; align-text padding: 10px; text-align: center;}
 </style>
+<style>
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 90%;
+    padding: 12px 20px;
+    margin: 16px 0;
+    /*margin-left: 24%;*/
+    /*display: inline-block;*/
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.black-background {background-color:#000000;}
+.white {color:#ffffff;}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.container {
+    padding: 16px;
+    width: 80%;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 36%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+       display: block;
+       float: none;
+    }
+    .cancelbtn {
+       width: 100%;
+    }
+}
+</style>
 <body class="w3-light-grey">
 
 <!-- Navigation bar with social media icons -->
 <div class="w3-bar w3-black w3-hide-small">
-  <a href="/" class="w3-bar-item w3-button">Home</a>
   <a href="/question/post" class="w3-bar-item w3-button">Ask question</a>
   <a href="/questionsfeed" class="w3-bar-item w3-button">Answer questions</a>
   <a href="/filterquestions" class="w3-bar-item w3-button">Filter top looks</a>
 
-  <a class="w3-bar-item w3-button w3-right">Hello {{ request.user.username }}!</a>
+  {% if user.is_authenticated %}
+    <h6><a href="{%  url 'logout_user' %}" class="w3-bar-item w3-button w3-right">{{ user.username }}  (logout)</a></h6>
+  {% endif %}
 </div>
   
 <!-- w3-content defines a container for fixed size centered content, 
@@ -48,8 +144,10 @@ and is wrapped around the whole page content, except for the footer in this exam
 
   <!-- Header -->
   <header class="w3-container w3-center w3-padding-48 w3-white">
-    <h1 class="w3-xxxlarge"><b>DressCode</b></h1>
-    <h6>let the crowd help you <span class="w3-tag">look better</span></h6>
+    <!-- <a href="index.html"> -->
+      <h1 class="w3-xxxlarge"><b>DressCode</b></h1>
+      <h6>let the crowd help you <span class="w3-tag">look better</span></h6>
+    <!-- </a> -->
   </header>
 
   <!-- Image header -->
@@ -58,15 +156,115 @@ and is wrapped around the whole page content, except for the footer in this exam
     <div class="w3-display-left w3-padding-large">
       <h1 class="w3-text-white">START</h1>
       <h1 class="w3-jumbo w3-text-white w3-hide-small"><b>COLLABORATING</b></h1>
-      <h6><button class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('sign in').style.display='block'">SIGN IN</button></h6>
-      <h6><button class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('login').style.display='block'">LOG IN</button></h6>
+      <h6><button style="width:24%;" class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('id02').style.display='block'">SIGN UP</button></h6>
+      <h6><button style="width:24%;" class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('id01').style.display='block'">LOG IN</button></h6>
     </div>
   </header>
     
 </head>
 <body>
 
+<div id="id01" class="modal">
+  <form class="modal-content animate" action="{%  url 'login_user' %}" method="post">
+  {% csrf_token %}
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+    </div>
+
+    <div class="container">
+      <!-- <label><b>Username</b></label> -->
+      <input type="text" placeholder="Enter Username" name="uname" required>
+
+      <!-- <label><b>Password</b></label> -->
+      <input type="password" placeholder="Enter Password" name="psw" required>
+      <button  class="btn" style="background-color: #000000;
+                      color: white;
+                      padding: 14px 20px;
+                      margin: 8px 0;
+                      border: none;
+                      cursor: pointer;
+                      width: 30%;
+                      margin-left: 30%;
+                      margin-right: 6%;
+                      text-align: center;"
+              type="submit"><b>Login</b></button>
+      <input type="checkbox" checked="checked"> Remember me
+      <input type="hidden" name="next" value="{{ request.GET.next }}" />
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <span class="psw">Forgot <a href="#">password?</a></span>
+    </div>
+  </form>
+</div>
+
+<div id="id02" class="modal">
+  
+  <form class="modal-content animate" action="{%  url 'signup_user' %}" method="post">
+  {% csrf_token %}
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+    </div>
+
+    <div class="container">
+      <!-- <label><b>Username</b></label> -->
+      <input type="text" placeholder="Username" name="uname" required>
+
+      <!-- <label><b>Password</b></label> -->
+      <input type="password" placeholder="Password" name="psw" required>
+      <input type="password" placeholder="Confirm Password" name="confirm-psw" required>
+      <input type="text" placeholder="Email" name="email" required>
+      <div class="form-group">
+        <select style="width:90%; margin-top: 16px; margin-bottom: 26px;" class="form-control" id="sel1" name="gender">
+          <option>GENDER</option>
+          <option>MALE</option>
+          <option>FEMALE</option>
+        </select>
+      </div>
+      <div class="form-group">
+      <div class="input-group date" data-provide="datepicker">
+            <input style="margin-top:1px;" class="form-control" id="date" name="dob"  data-format="MM/DD/YYY" placeholder="MM/DD/YYY" type="text"/>
+            <div class="input-group-addon">
+              <span class="glyphicon glyphicon-th"></span>
+            </div>
+          </div>
+      </div>
+      <button  class="btn" style="background-color: #000000;
+                      color: white;
+                      padding: 14px 20px;
+                      margin: 8px 0;
+                      border: none;
+                      cursor: pointer;
+                      width: 30%;
+                      margin-left: 30%;
+                      margin-right: 6%;
+                      text-align: center;"
+              type="submit"><b>Sign Up</b></button>
+    </div>
+  </form>
+</div>
+
+<script>
+// Get the modal
+var modal1 = document.getElementById('id01');
+var modal2 = document.getElementById('id02');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal1 || event.target == modal2) {
+        modal1.style.display = "none";
+        modal2.style.display = "none";
+    }
+}
+</script>
 </body>
 
-<footer><br>Copyright &copy; DressCode<br><br></footer>
+<footer>
+<br>
+<a href="#" class="fa fa-facebook" style="margin-left: 20px;"></a>
+    <a href="#" class="fa fa-twitter" style="margin-left: 20px;"></a>
+    <a href="#" class="fa fa-linkedin" style="margin-left: 20px;"></a>
+  <br><br>
+</footer>
+
 </html>

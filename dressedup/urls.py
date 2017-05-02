@@ -20,6 +20,7 @@ from dresscodeapp import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
+    url(r'^home/$', views.index),
     url(r'^filterquestions/$', views.filter_questions_page, name='filter_questions_page'),
     url(r'^filteredresults/$', views.return_filtered_results, name='return_filtered_results'),
     url(r'^question/(?P<q_pk>\d+)/$', views.question_page, name='question_page'),
@@ -31,6 +32,9 @@ urlpatterns = [
     url(r'^view-result/$', views.view_result, name='view_result'),
     url(r'^view-result-filter/(?P<q_pk>\d+)/(?P<gender>[f|m|u])/(?P<minage>\d+)/(?P<maxage>\d+)/$', views.view_question_with_filters, name='view_question_with_filters'),
     url(r'^question-result/(?P<q_pk>\d+)/$', views.view_question, name='view_question'),
+    url(r'^login-user/$', views.login_user, name='login_user'),
+    url(r'^signup-user/$', views.signup_user, name='signup_user'),
+    url(r'^logout-user/$', views.logout_user, name='logout_user'),
     # url(r'^ask/$', views.post_question, name='post_question'),
 
 ]

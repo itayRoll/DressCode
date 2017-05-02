@@ -3,11 +3,15 @@ import os
 
 from django.core.files.base import ContentFile
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 from models import *
-from datetime import datetime
+from datetime import datetime, timedelta
 
+SPAM_SECONDS_GAP = 10
+SPAM_ANSWERS_GAP = 10
 USER_SCORE_FOR_NEW_ANSWER = 1
 USER_SCORE_FOR_NEW_QUESTION = 7
 MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
@@ -16,76 +20,120 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Create your views here.
 def index(request):
-    # return HttpResponse('Welcome to DressCode!')
-    # if request.user.is_authenticated():
-    # return HttpResponseRedirect('/feed/')
+    # passed validations
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/questionsfeed/')
     return render(request, 'dresscodeapp/base.html', {})
 
 
+def login_user(request):
+    logout(request)
+    username = password = ''
+    if request.POST:
+        username = request.POST['uname']
+        password = request.POST['psw']
+        next_page = request.POST['next']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                if Fuser.objects.get(user__username=user.username).spammer:
+                    # logged in user is a spammer!
+                    pass
+                if next_page != '':
+                    return HttpResponseRedirect(next_page)
+                return HttpResponseRedirect('/questionsfeed/')
+    return render(request, 'dresscodeapp/base.html')
+
+
+def signup_user(request):
+    logout(request)
+    if request.POST:
+        username = request.POST['uname']
+        password = request.POST['psw']
+        confirm_password = request.POST['confirm-psw']
+        if not password == confirm-psw:
+            return HttpResponseRedirect('/home/')
+        email = request.POST['email']
+        gender = request.POST['gender']
+        if gender == 'gender':
+            gender = 'u'
+        else:
+            gender = gender[:1].lower()
+        dob = request.POST['dob']
+        try:
+            # user is already in the system
+            user = User.objects.get(username=username)
+        except:
+            user = User.objects.create_user(username=username, email=email, password=password)
+            fuser = Fuser(user=user, gender=gender, dob=datetime.strptime(dob, "%m/%d/%Y").date())
+            fuser.save()
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return HttpResponseRedirect('/home/')
+    return HttpResponseRedirect('/questionsfeed/')
+
+
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect('/home/')
+
+
+@login_required(login_url='/home/')
 def post_question_page(request):
+    # passed validations
     fuser = Fuser.objects.get(user__username=request.user.username)
     return render(request, 'dresscodeapp/postquestion.html', {'score': fuser.score})
 
-
+@login_required(login_url='/home/')
 def filter_questions_page(request):
+    # passed validations
     clothingItems = [x[1] for x in ClothingItem.TYPES]
     colors = [x[1] for x in ClothingItem.COLORS]
     patterns = [x[1] for x in ClothingItem.PATTERN]
     return render(request, 'dresscodeapp/filterquestions.html',
                   {'clothingItems': clothingItems, 'colors': colors, 'patterns': patterns})
 
-
+@login_required(login_url='/home/')
 def return_filtered_results(request):
     curr_username = request.user.username
-    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
-    questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
-    questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids)
-
     gender = request.POST.get('gender')
-    list_by_gender = Fuser.objects.filter(gender=gender)
-    questions_feed = Question.objects.filter(user__in=list_by_gender)
-    items_tmp = request.POST.get('items_lst')
-    all_items = items_tmp.split("#")
+    all_items = request.POST.get('items_lst').split("#")
+    items_lst = []
+    for item_str in all_items:
+        n, c, p = item_str.split(',')
+        items_lst.append(ClothingItem(name=n, color=c, pattern=p))
+    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)] # questions answered by user
 
-    for item in all_items:
-        sub_items = item.split(",")
-        # need to add filter by items
-        for question in questions_feed:
-            question_items = [val for val in question.clothing_items.all()]
-            if sub_items not in question_items:
-                questions_feed = Question.objects.exclude(pk=question.pk)
-    questions_feed = Question.objects.order_by('-published_date')[:2]
-
-    items_dict = {}
-    for question in questions_feed:
-        items_dict[question.pk] = []
-    items_dict[question.pk] = [val for val in question.clothing_items.all()]
+    # retrieve questions answered by specified gender, from future, not asked by user nor answered by him
+    questions_feed = [q for q in Question.objects.filter(user__gender=gender,
+                                                        due_date__gte=timezone.now()).exclude(user__user__username=curr_username).order_by('-published_date')[:2] if q.pk not in answered_ids
+                                                                                                                                    and any([it in q.clothing_items.all() for it in items_lst])]
     return render(request, 'dresscodeapp/filteredresults.html', {'questions': questions_feed})
 
-
+@login_required(login_url='/home/')
 def question_page(request, q_pk):
     question = Question.objects.get(pk=q_pk)
     return render(request, 'dresscodeapp/question.html', {'question': question})
 
-
+@login_required(login_url='/home/')
 def post_answer(request):
     # check for spam: if user answered 10 questions in the past 10 seconds - kick his ass
-    # spam_threshold = datetime.now() - timedelta(seconds=10)
-    # recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold)
-    # if len(recently_answered_by_user) > 9:
-    # handle as spam (warning / log user out / kill user)
-    # pass
+    curr_username = request.user.username
+    spam_threshold = datetime.now() - timedelta(seconds=SPAM_SECONDS_GAP)
+    recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold, user__user__username=curr_username)
+    if len(recently_answered_by_user) > SPAM_ANSWERS_GAP:
+        # handle as spam (warning / log user out / kill user)
+        pass
     # continue as usual
-    answerer = Fuser.objects.get(user__username=request.user.username)
+    answerer = Fuser.objects.get(user__username=curr_username)
     answerer.num_answers += 1
     answerer.score += USER_SCORE_FOR_NEW_ANSWER
     vote = request.POST['vote']
     question_pk = request.POST['question_id']
-    items_not_as_pic = request.POST.get('itemsNotAsPic')
-    if items_not_as_pic == u'true':
-        items_not_as_pic = True
-    else:
-        items_not_as_pic = False
+    items_not_as_pic = request.POST.get('itemsNotAsPic') == u'true'
     answer = Answer(vote=vote, question_id=question_pk, user=answerer, items_not_as_pic=items_not_as_pic)
     answer.save()
     answerer.save()
@@ -123,31 +171,26 @@ def find_spammer_by_answer(question_id, answerer_name, vote):
             update_spammer_credit(answerer_name)
 
 
-def update_spammer_credit(id):
-    user = Fuser.objects.get(pk=id)
-    user.spammer_credit += 1
-    if user.spammer_credit >= 0.85 * (user.num_questions + user.num_answers):
-        user.spammer = True
-    user.save()
+def update_spammer_credit(name):
+    fuser = Fuser.objects.get(user__username=name)
+    fuser.spammer_credit += 1
+    if fuser.spammer_credit >= 0.85 * (fuser.num_questions + fuser.num_answers):
+        fuser.spammer = True
+    fuser.save()
 
 
+@login_required(login_url='/home/')
 def get_questions_feed(request):
     curr_username = request.user.username
     answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
 
-    # user cant answer his own question, questions with past due date are irrelevant
-    questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
-
-    # we will not negotiate with terrorists!!
-    questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(user__spammer=True)
-    questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(items_not_as_pic=True)
-
-    # user will not answer same question twice
-    questions_feed = Question.objects.filter(pk__in=questions_feed).exclude(pk__in=answered_ids).order_by(
-        '-published_date')[:2]
+    # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
+    questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username).order_by(
+        'due_date')[:5] if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids]
     return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
 
 
+@login_required(login_url='/home/')
 def post_question(request):
     # upload image from user
     folder = os.path.join('dresscodeapp', 'static', 'user_images', request.user.username)
@@ -195,9 +238,9 @@ def post_question(request):
             db_item = ClothingItem(color=sub_items[1].upper(), type=sub_items[0].upper(),
                                    pattern=sub_items[2].upper())
             db_item.save()
-            question.clothing_items.add(db_item)
         else:
-            question.clothing_items.add(db_item[0].pk)
+            db_item = db_item[0]
+        question.clothing_items.add(db_item)
         question.save()
 
     user = Fuser.objects.get(user__username=request.user.username)
@@ -206,6 +249,7 @@ def post_question(request):
     return HttpResponse(json.dumps({'success': True}))
 
 
+@login_required(login_url='/home/')
 def get_results(request):
     curr_username = request.user.username
     # user cant answer his own question, questions with past due date are irrelevant
@@ -214,11 +258,12 @@ def get_results(request):
     return render(request, 'dresscodeapp/results.html', {'questions': questions_feed})
 
 
+@login_required(login_url='/home/')
 def view_result(request):
     question_pk = request.POST['question_id']
     gender = request.POST.get('gender')
-    min = request.POST.get('minAge')
-    max = request.POST.get('maxAge')
+    min_age = request.POST.get('minAge')
+    max_age = request.POST.get('maxAge')
     if gender == "Female":
         gender = 'f'
     elif gender == "Male":
@@ -227,9 +272,10 @@ def view_result(request):
         gender = 'u'
 
     return HttpResponse(
-        json.dumps({'success': True, 'q_id': question_pk, 'gender': gender, 'minAge': min, 'maxAge': max}))
+        json.dumps({'success': True, 'q_id': question_pk, 'gender': gender, 'minAge': min_age, 'maxAge': max_age}))
 
 
+@login_required(login_url='/home/')
 def view_question(request, q_pk):
     question = Question.objects.get(pk=q_pk)
     answers = Answer.objects.filter(question_id=q_pk)
@@ -242,6 +288,7 @@ def view_question(request, q_pk):
                   {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit, 'filter': False})
 
 
+@login_required(login_url='/hom/')
 def view_question_with_filters(request, q_pk, gender, minage, maxage):
     question = Question.objects.get(pk=q_pk)
 

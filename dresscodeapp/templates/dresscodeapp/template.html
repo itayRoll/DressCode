@@ -13,6 +13,8 @@
     <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/dresscode.css' %}">
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/postQuestion.js' %}"></script>
     <script type="text/javascript">
@@ -34,12 +36,15 @@ footer {background: black;color:white; align-text padding: 10px; text-align: cen
 
 <!-- Navigation bar with social media icons -->
 <div class="w3-bar w3-black w3-hide-small">
-  <a href="/" class="w3-bar-item w3-button">Home</a>
+  <!-- <a href="/" class="w3-bar-item w3-button">Home</a> -->
   <a href="/question/post" class="w3-bar-item w3-button">Ask question</a>
   <a href="/questionsfeed" class="w3-bar-item w3-button">Answer questions</a>
   <a href="/filterquestions" class="w3-bar-item w3-button">Filter top looks</a>
 
-  <a class="w3-bar-item w3-button w3-right">Hello {{ request.user.username }}!</a>
+  {% if user.is_authenticated %}
+    <h6><a href="{%  url 'logout_user' %}" class="w3-bar-item w3-button w3-right">{{ user.username }}  (logout)</a></h6>
+  {% endif %}
+  <!-- <a class="w3-bar-item w3-button w3-right">Hello {{ request.user.username }}!</a> -->
 </div>
   
 <!-- w3-content defines a container for fixed size centered content, 

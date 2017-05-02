@@ -42,6 +42,7 @@ class Question(models.Model):
 	due_date = models.DateTimeField(null=True)
 	clothing_items = models.ManyToManyField('ClothingItem')
 	items_not_as_pic = models.BooleanField(default=False)
+	# items_not_as_pic = models.IntegerField(default=0)
 
 	def __str__(self):
 		return self.title
@@ -61,6 +62,9 @@ class Answer(models.Model):
 	vote = models.CharField(max_length=1, choices=VOTES)
 	items_not_as_pic = models.BooleanField(default=False)
 	question_id = models.IntegerField()
+
+	def __str__(self):
+		return '{0} - {1} - {2}'.format(self.question_id, self.user.user.username, self.vote)
 
 
 class ClothingItem(models.Model):
@@ -105,5 +109,8 @@ class ClothingItem(models.Model):
 
 	#def __str__(self):
 	#	return '{0} {1}'.format(self.color[1], self.type[1])
+
+	def __eq__(self, other):
+		return self.color == other.color and self.type == other.type and self.color == other.color
 
 
