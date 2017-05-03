@@ -1,7 +1,7 @@
 <style>
 .center{
     position:absolute;
-    width:1200px;
+    width:1150px;
     height:650px;
 	
     top:50%;
@@ -9,12 +9,54 @@
 	margin-left:0%;
 
 }
-td, th {
-    border: 1px solid black;
-	border-width: 3px;
-}
+
 table {
 margin-bottom: 70px
+}
+
+.my-btn{background-color: #000000;
+                      color: white;
+                      padding: 12px 20px;
+                      margin: 10px 2px;
+                      border: none;
+                      cursor: pointer;
+                      
+                      
+                      
+                      text-align: center;
+		}
+		
+img {
+    display: inline-block;
+    vertical-align: middle;
+    width: 400px;
+	margin-right:10%;
+}
+.text {
+   display: inline-block;
+    vertical-align: middle;
+}
+
+.mycss
+{
+font-weight:normal;color:#FFFFFF;background-color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+ padding: 12px 20px;
+}
+
+.mycss2
+{
+font-weight:normal;color:#FFFFFF;background-color:#9E9E9E;letter-spacing:1pt;word-spacing:2pt;font-size:21px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+padding: 5px 20px;
+}
+
+.mycss3
+{
+font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
+}
+
+.mycss4
+{
+font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
 }
 
 </style>
@@ -29,22 +71,28 @@ margin-bottom: 70px
 	<tr>
 		{% for question in questions%}
 		<td id="question{{ question.pk }}">
-		<br></br>
+		
 			<div style="text-align:center"> 
-				<h3>
-					<b>{{ question.title }} </b>
-				</h3>
-				<h5>{{ question.description }} </h5>
-				<p>{% if question.clothing_items%}
+			<p class="mycss">
+					{{ question.title }} 
+			</p>
+			<p class="mycss2">{{ question.description }} </p>
+			</div>
+			<br></br>
+			
+			<div class="cf" align="middle">
+    <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
+						class="img-thumbnail" style="width: 50%; height: 50%"/>
+	<div class="text">
+	<p>{% if question.clothing_items%}
+					<p class="mycss4"> Clothing items:</p> 
 					{% for clothing_item in question.clothing_items.all %}
-					<li>{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</li>
+					<p class="mycss3">{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</p>
 					{% endfor %}
 					{%endif%}</p>
-			</div>
-			<div align="middle">
-				<img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
-						class="img-thumbnail" style="width: 50%; height: 50%"/>
-			</div>
+	</div>
+	</div>
+			
 			<div style="text-align:center">
 				<p>
 					<br>
@@ -56,17 +104,17 @@ margin-bottom: 70px
 						<p>
 							<br>
 							</p>
-							<button id="yay{{ question.pk }}" type="button" class="btn-custom"
+							<button id="yay{{ question.pk }}" type="button" class="my-btn"
 									onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})">
 								<span
 										class="glyphicon glyphicon-thumbs-up">
 								</span><b> PERFECT MATCH!</b>
 							</button>
-							<button id="meh{{ question.pk }}" type="button" class="btn-custom"
+							<button id="meh{{ question.pk }}" type="button" class="my-btn"
 									onclick="postAnswer({{ question.pk }}, 0, {{ question.user.score }})">
 								<b>MAYBE TO SOMEWHERE ELSE</b>
 							</button>
-							<button id="nay{{ question.pk }}" type="button" class="btn-custom"
+							<button id="nay{{ question.pk }}" type="button" class="my-btn"
 									onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})">
 								<span
 										class="glyphicon glyphicon-thumbs-down">
@@ -75,6 +123,8 @@ margin-bottom: 70px
 						</div>
 						<br>
 						<br></br>
+						<br></br>
+						
 						</td>
 						<td id="thanks{{ question.pk }}" hidden="true">
 							<div id="msg{{ question.pk }}" class="panel panel-info"
