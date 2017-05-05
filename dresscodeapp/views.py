@@ -326,7 +326,6 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
         min_year = max_year
         max_year = tmp
 
-
     min_date = datetime(year=min_year, month=1, day=1)
     max_date = datetime(year=max_year, month=12, day=31)
 
@@ -334,7 +333,7 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
         exclude users from relevant_users by birthdate..
         can't find this field of user...
     """
-    if minage != 0:
+    if minage != 0 or maxage != 0:
         if relevant_users is None:
             relevant_users = Fuser.objects.filter(dob__gte=min_date, dob__lte=max_date)
         else:
@@ -381,6 +380,7 @@ def get_filter_text(gender, minage, maxage):
                 filter_text = filter_text + ", Maximum age: " + str(maxage)
 
     return filter_text
+
 
 def get_answers_rate(answers):
     answers_fit = Answer.objects.filter(pk__in=answers, vote='1')
