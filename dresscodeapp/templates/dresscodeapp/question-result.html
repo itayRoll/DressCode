@@ -1,117 +1,170 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load staticfiles %}
-    <title>DressCode</title>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
-    <link href="//fonts.googleapis.com/css?family=Ubuntu+Condensed&subset=latin,latin-ext" rel="stylesheet"
-          type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Quicksand&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Bungee+Inline&subset=latin,latin-ext" rel="stylesheet"
-          type="text/css">
-    <!-- <link rel="stylesheet" href="{% static 'css/casino.css' %}"> -->
-    <script src="https://www.google.com/jsapi"></script>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">google.load('visualization', '1.0', {'packages':['corechart']});</script>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/chart.js' %}"></script>
-    <script type="text/javascript">
-			var CSRF_TOKEN = '{{ csrf_token }}';
-    </script>
+<style>
+.center{
+    position:absolute;
+    width:1150px;
+    height:650px;
 
-    <script type="text/javascript">
-        var fit = "{{ fit }}"
-        var n_fit = "{{ no_fit }}"
-        var p_fit = "{{ partial_fit }}"
-        var filter = "{{ filter }}"
-        google.setOnLoadCallback(function() { drawChart(fit, n_fit, p_fit, filter); });
-    </script>
-</head>
-<body>
-<div class="page-header">
-    <h1><a href="#">DressCode</a></h1>
-    <nav class="nav">
-        <ul>
-            <li>
-                <a href="#">{{ request.user.username }}</a>
-                <ul>
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="#">Logout</a></li>
-                </ul>
-            </li>
-        </ul>
-    </nav>
-</div>
+    top:50%;
+
+	margin-left:0%;
+
+}
+
+table {
+margin-bottom: 70px
+}
+
+.my-btn{background-color: #000000;
+                      color: white;
+                      padding: 12px 20px;
+                      margin: 10px 2px;
+                      border: none;
+                      cursor: pointer;
+
+
+
+                      text-align: center;
+		}
+
+img {
+    display: inline-block;
+    vertical-align: middle;
+    width: 400px;
+	margin-right:10%;
+}
+.text {
+   display: inline-block;
+    vertical-align: middle;
+}
+
+.mycss
+{
+font-weight:normal;color:#FFFFFF;background-color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+ padding: 12px 20px;
+}
+
+.mycss2
+{
+font-weight:normal;color:#FFFFFF;background-color:#9E9E9E;letter-spacing:1pt;word-spacing:2pt;font-size:21px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+padding: 5px 20px;
+}
+
+.mycss3
+{
+font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
+}
+
+.mycss4
+{
+font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
+}
+.mycss5
+{
+font-weight:bold;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;
+}
+.mycss6
+{
+font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;
+}
+
+
+</style>
+{%  extends 'dresscodeapp/template.html' %}
+{% load staticfiles %}
+{% block content %}
+<script type="text/javascript">
+    var fit = "{{ fit }}"
+    var n_fit = "{{ no_fit }}"
+    var p_fit = "{{ partial_fit }}"
+    var filter = "{{ filter }}"
+    google.setOnLoadCallback(function() { drawChart(fit, n_fit, p_fit, filter); });
+</script>
 
 <div id="main" class="content container">
     <div class="row col-md-8">
-        {% block content %}
         <div id="results" class="question_container">
-            <table id="results_table">
-                <tr>
+            <table id="results_table" class="center"  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg" >
+                <tr valign="top">
                     <td id="question{{ question.pk }}">
-                        <div>
-                            <h3><b>{{ question.title }} </b></h3>
-                            <h5>{{ question.description }} </h5>
-                            <p> {{ question.due_date }} </p>
+                        <div style="text-align:center">
+                            <p class="mycss">
+                                    {{ question.title }}
+                            </p>
+                            <p class="mycss2">{{ question.description }} </p>
+                           <p align="center" class="mycss5"> {{ question.due_date }} </p>
                         </div>
-                        <div>
-                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;"
-                                 src="{% static question.photo_path %}" alt=""
-                                 class="homeImage" style="width: 50%; height: 50%"/>
+                        <div class="cf" align="middle">
+				            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
+							class="img-thumbnail" style="width: 50%; height: 50%"/>
+                        <br>
                         </div>
                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        {% if filter == True%}
-                            <h3><b>Filtered Results- </b></h3>
-                            {% if gender and gender == "f"%}
-                                <div id="genderdiv">Gender: Female</div>
-                            {% elif gender and gender == "m"%}
-                                <div id="genderdiv">Gender: Male</div>
-                            {% endif %}
-                        {% else %}
-                            <h3><b>Results- </b></h3>
-                        {% endif %}
-                        <div id="pie" style="width: 900px; height: 500px;"></div>
-                        <div id="nopie"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h5><b>Filter Results- </b></h5>
-                        Gender:
-                        <select class="form-control" id="gender">
-                            <option value="" selected disabled>Select</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                        </select>
-                        Minimum age:
-                        <select class="form-control" id="minAge">
-                            <option value="" selected disabled>Select</option>
-                        </select>
-                        Maximim age:
-                        <select class="form-control" id="maxAge">
-                            <option value="" selected disabled>Select</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="submit" class="btn btn-primary" value="Submit"
+                    <td align="center">
+                         <div style="text-align:center">
+                            <p class="mycss">Filter Results</p>
+                            <p align="center" class="mycss5">Gender:</p>
+                            <p align="center">
+                                <select class="form-control" id="gender" style="width: 50%">
+                                    <option value="" selected disabled>Select</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                            </p>
+                             <p align="center" class="mycss5">Minimum age:</p>
+                             <p align="center">
+                                <select class="form-control" id="minAge" style="width: 50%">
+                                    <option value="" selected disabled>Select</option>
+                                </select>
+                             </p>
+                             <p align="center" class="mycss5">Maximum age:</p>
+                             <p align="center">
+                                <select class="form-control" id="maxAge" style="width: 50%">
+                                    <option value="" selected disabled>Select</option>
+                                </select>
+                             </p>
+                            <br>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Filter results"
                                onclick="filterResults({{ question.pk }})">
+                        {% if filter == True%}
+                            <br>
+                            <br>
+                            <p class="mycss5">Current filters</p>
+                            <p class="mycss6">
+                            {% if filter_text %}
+                                {{ filter_text }}
+                            {% endif %}
+                            </p>
+                            <br>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="text-align:center">
+                            <p class="mycss5">General Results</p>
+                        <div id="pie"></div>
+                        {% if filter == True%}
+                            <p class="mycss6" id="nopie">There are no results matching your filter</p>
+                        {% else %}
+                            <p class="mycss6" id="nopie">No results yet...</p>
+                        {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                         <div style="text-align:center">
+                            <p class="mycss5">Users with similar taste</p>
+                        <div id="pie2"></div>
+                        {% if filter == True%}
+                            <p class="mycss6" id="nopie2">There are no results matching your filter</p>
+                        {% else %}
+                            <p class="mycss6" id="nopie2">No results yet...</p>
+                        {% endif %}
+                         </div>
                     </td>
                 </tr>
             </table>
         </div>
-        {% endblock %}
     </div>
 </div>
-</body>
-</html>
+{% endblock %}

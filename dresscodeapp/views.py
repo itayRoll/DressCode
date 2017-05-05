@@ -52,7 +52,7 @@ def signup_user(request):
         username = request.POST['uname']
         password = request.POST['psw']
         confirm_password = request.POST['confirm-psw']
-        if not password == confirm-psw:
+        if not password == confirm - psw:
             return HttpResponseRedirect('/home/')
         email = request.POST['email']
         gender = request.POST['gender']
@@ -87,6 +87,7 @@ def post_question_page(request):
     fuser = Fuser.objects.get(user__username=request.user.username)
     return render(request, 'dresscodeapp/postquestion.html', {'score': fuser.score})
 
+
 @login_required(login_url='/home/')
 def filter_questions_page(request):
     # passed validations
@@ -95,6 +96,7 @@ def filter_questions_page(request):
     patterns = [x[1] for x in ClothingItem.PATTERN]
     return render(request, 'dresscodeapp/filterquestions.html',
                   {'clothingItems': clothingItems, 'colors': colors, 'patterns': patterns})
+
 
 @login_required(login_url='/home/')
 def return_filtered_results(request):
@@ -105,25 +107,30 @@ def return_filtered_results(request):
     for item_str in all_items:
         n, c, p = item_str.split(',')
         items_lst.append(ClothingItem(name=n, color=c, pattern=p))
-    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)] # questions answered by user
+    answered_ids = [a.question_id for a in
+                    Answer.objects.filter(user__user__username=curr_username)]  # questions answered by user
 
     # retrieve questions answered by specified gender, from future, not asked by user nor answered by him
     questions_feed = [q for q in Question.objects.filter(user__gender=gender,
-                                                        due_date__gte=timezone.now()).exclude(user__user__username=curr_username).order_by('-published_date')[:2] if q.pk not in answered_ids
-                                                                                                                                    and any([it in q.clothing_items.all() for it in items_lst])]
+                                                         due_date__gte=timezone.now()).exclude(
+        user__user__username=curr_username).order_by('-published_date')[:2] if q.pk not in answered_ids
+                      and any([it in q.clothing_items.all() for it in items_lst])]
     return render(request, 'dresscodeapp/filteredresults.html', {'questions': questions_feed})
+
 
 @login_required(login_url='/home/')
 def question_page(request, q_pk):
     question = Question.objects.get(pk=q_pk)
     return render(request, 'dresscodeapp/question.html', {'question': question})
 
+
 @login_required(login_url='/home/')
 def post_answer(request):
     # check for spam: if user answered 10 questions in the past 10 seconds - kick his ass
     curr_username = request.user.username
     spam_threshold = datetime.now() - timedelta(seconds=SPAM_SECONDS_GAP)
-    recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold, user__user__username=curr_username)
+    recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold,
+                                                      user__user__username=curr_username)
     if len(recently_answered_by_user) > SPAM_ANSWERS_GAP:
         # handle as spam (warning / log user out / kill user)
         pass
@@ -185,7 +192,8 @@ def get_questions_feed(request):
     answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
 
     # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
-    questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username).order_by(
+    questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(
+        user__user__username=curr_username).order_by(
         'due_date')[:5] if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids]
     return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
 
@@ -288,8 +296,10 @@ def view_question(request, q_pk):
                   {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit, 'filter': False})
 
 
-@login_required(login_url='/hom/')
+@login_required(login_url='/home/')
 def view_question_with_filters(request, q_pk, gender, minage, maxage):
+    filter_text = get_filter_text(gender, minage, maxage)
+    relevant_users = None
     question = Question.objects.get(pk=q_pk)
 
     if gender == 'u' and minage == '0' and maxage == '0':
@@ -302,7 +312,6 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
     minage = int(minage)
     maxage = int(maxage)
     max_year = this_year
-    min_year = this_year
 
     if minage != 0:
         max_year = this_year - minage
@@ -317,6 +326,7 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
         min_year = max_year
         max_year = tmp
 
+
     min_date = datetime(year=min_year, month=1, day=1)
     max_date = datetime(year=max_year, month=12, day=31)
 
@@ -324,8 +334,11 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
         exclude users from relevant_users by birthdate..
         can't find this field of user...
     """
-    #if minage != 0:
-       #relevant_users = Fuser.objects.filter(pk__in=relevant_users, gender=gender)
+    if minage != 0:
+        if relevant_users is None:
+            relevant_users = Fuser.objects.filter(dob__gte=min_date, dob__lte=max_date)
+        else:
+            relevant_users = Fuser.objects.filter(pk__in=relevant_users, dob__gte=min_date, dob__lte=max_date)
 
     answers = Answer.objects.filter(question_id=q_pk, user__in=relevant_users)
 
@@ -335,8 +348,39 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
 
     return render(request, 'dresscodeapp/question-result.html',
                   {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit, 'filter': True,
-                   'gender': gender})
+                   'filter_text': filter_text})
 
+
+def get_filter_text(gender, minage, maxage):
+    filter_text = ""
+    minage = int(minage)
+    maxage = int(maxage)
+
+    if gender != 'u':
+        if gender == 'f':
+            filter_text = "Female"
+        else:
+            filter_text = "Male"
+
+    if minage != 0 and maxage != 0 and minage > maxage:
+        if filter_text == "":
+            filter_text = "Minimum age: " + str(maxage) + ", Maximum age: " + str(minage)
+        else:
+            filter_text = filter_text + "Minimum age: " + str(maxage) + ", Maximum age: " + str(minage)
+    else:
+        if minage != 0:
+            if filter_text == "":
+                filter_text = "Minimum age: " + str(minage)
+            else:
+                filter_text = filter_text + ", Minimum age: " + str(minage)
+
+        if maxage != 0:
+            if filter_text == "":
+                filter_text = "Maximum age: " + str(maxage)
+            else:
+                filter_text = filter_text + ", Maximum age: " + str(maxage)
+
+    return filter_text
 
 def get_answers_rate(answers):
     answers_fit = Answer.objects.filter(pk__in=answers, vote='1')

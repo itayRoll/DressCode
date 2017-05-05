@@ -8,14 +8,14 @@ function postAnswer(questionId, vote, userScore){
 	if ($('#checkbox'+questionId)[0].checked) {
         itemsNotAsPic = true
 	}
-	$('#thanks'+questionId).fadeOut(1000)
+	$('#thanks'+questionId).fadeOut(5000)
 	var numOfVisibleRows = $('#questions_table tr:visible').length
 	var thankyou = 'Thanks for answering!';
 	var text = userScore > 10 ? '\nYou have enough credit. Post!' : 'Only '+ (10 - userScore) + ' to go';
 	$('#msgText'+questionId).text(thankyou+text);
 	if (numOfCalls == numOfVisibleRows)
 	{
-	$('#reload').show()
+	    $('#reload').show()
 	}
 	$.ajax({
 				url: "/post-answer/",

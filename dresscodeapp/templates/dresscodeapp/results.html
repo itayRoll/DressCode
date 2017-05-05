@@ -1,41 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load staticfiles %}
-    <title>DressCode</title>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
-    <link href="//fonts.googleapis.com/css?family=Ubuntu+Condensed&subset=latin,latin-ext" rel="stylesheet"
-          type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Quicksand&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Bungee+Inline&subset=latin,latin-ext" rel="stylesheet"
-          type="text/css">
-    <!-- <link rel="stylesheet" href="{% static 'css/casino.css' %}"> -->
-    <script src="{% static 'js/main.js' %}"></script>
-    <script type="text/javascript">
-			var CSRF_TOKEN = '{{ csrf_token }}';
-    </script>
-</head>
-<body>
-<div class="page-header">
-    <h1><a href="#">DressCode</a></h1>
-    <nav class="nav">
-        <ul>
-            <li>
-                <a href="#">{{ request.user.username }}</a>
-                <ul>
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="#">Logout</a></li>
-                </ul>
-            </li>
-        </ul>
-    </nav>
-</div>
+<style>
+.center{
+    position:absolute;
+    width:1150px;
+    height:650px;
 
+    top:50%;
+
+	margin-left:0%;
+
+}
+
+table {
+margin-bottom: 70px
+}
+
+.my-btn{background-color: #000000;
+                      color: white;
+                      padding: 12px 20px;
+                      margin: 10px 2px;
+                      border: none;
+                      cursor: pointer;
+
+
+
+                      text-align: center;
+		}
+
+img {
+    display: inline-block;
+    vertical-align: middle;
+    width: 400px;
+	margin-right:10%;
+}
+.text {
+   display: inline-block;
+    vertical-align: middle;
+}
+
+.mycss
+{
+font-weight:normal;color:#FFFFFF;background-color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+ padding: 12px 20px;
+}
+
+.mycss2
+{
+font-weight:normal;color:#FFFFFF;background-color:#9E9E9E;letter-spacing:1pt;word-spacing:2pt;font-size:21px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+padding: 5px 20px;
+}
+
+.mycss3
+{
+font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
+}
+
+.mycss4
+{
+font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
+}
+
+</style>
+{%  extends 'dresscodeapp/template.html' %}
+{% load staticfiles %}
 <div id="main" class="content container">
     <div class="row col-md-8">
         {% block content %}
@@ -61,8 +87,7 @@
                         </div>
                         <div>
                             <p><br></p>
-                            <button id="view_results" type="button" class="btn btn-success"
-                                    onclick="viewResults({{ question.pk }})"><span>View result</span></button>
+                            <input type="submit" id="view_results" class="btn btn-primary" onclick="viewResults({{ question.pk }})" value="View Result">
                         </div>
                     </td>
                     <td id="thanks{{ question.pk }}" hidden="true">
@@ -88,5 +113,3 @@
         </div>
     </div>
 </div>
-</body>
-</html>
