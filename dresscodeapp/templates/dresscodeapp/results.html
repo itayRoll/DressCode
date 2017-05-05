@@ -62,54 +62,43 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
 </style>
 {%  extends 'dresscodeapp/template.html' %}
 {% load staticfiles %}
-<div id="main" class="content container">
-    <div class="row col-md-8">
-        {% block content %}
-        {%if questions %}
-        <div id="feed" class="question_container">
-            <table id="questions_table">
-                <tr>
-                    {% for question in questions%}
-                    <td id="question{{ question.pk }}">
-                        <div>
-                            <h3><b>{{ question.title }} </b></h3>
-                            <h5>{{ question.description }} </h5>
-                            <p> {{ question.due_date }} </p>
-                            <p>{% if question.clothing_items%}
-                            {% for clothing_item in question.clothing_items.all %}
-                                    <li>{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</li>
-                            {% endfor %}
-                            {%endif%}</p>
-                        </div>
-                        <div>
-                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
-                                 class="homeImage" style="width: 50%; height: 50%"/>
-                        </div>
-                        <div>
-                            <p><br></p>
-                            <input type="submit" id="view_results" class="btn btn-primary" onclick="viewResults({{ question.pk }})" value="View Result">
-                        </div>
-                    </td>
-                    <td id="thanks{{ question.pk }}" hidden="true">
-                        <div id="msg{{ question.pk }}" class="panel panel-info"
-                             style="width: 160px; text-align: center;">
-                            <div id="msgText{{ question.pk }}" class="panel-heading"></div>
-                        </div>
-                    </td>
-                    <br/>
-                </tr>
-                {%endfor%}
-                </tr>
-            </table>
-            {%else %}
-            <div> no new questions for you! ask your own!</div>
-            {%endif%}
-            {% endblock %}
-            <div>
-                <button id="reload" type="button" class="btn" style="display: none;"
-                        onclick="reload()">Load more Looks!</button>
-
+{% block content %}
+{%if questions %}
+<table id="questions_table" class="center"  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg" >
+    {% for question in questions%}
+    <tr>
+        <td id="question{{ question.pk }}">
+            <div style="text-align:center">
+                <p class="mycss">
+                        {{ question.title }}
+                </p>
+                <p class="mycss2">{{ question.description }} </p>
             </div>
-        </div>
-    </div>
-</div>
+            <br>
+            <div class="cf" align="middle">
+                <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
+                            class="img-thumbnail" style="width: 50%; height: 50%"/>
+                <div class="text">
+                    <p>{% if question.clothing_items%}
+                        <p class="mycss4"> Clothing items:</p>
+                            {% for clothing_item in question.clothing_items.all %}
+                                <p class="mycss3">{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</p>
+                            {% endfor %}
+                        {%endif%}
+                    </p>
+                </div>
+            </div>
+            <div class="cf" valign="bottom" align="middle">
+                <br>
+                <input type="submit" id="view_results" class="btn btn-primary" onclick="viewResults({{ question.pk }})" value="View Result">
+                <br>
+                <br>
+            </div>
+        </td>
+    </tr>
+    {%endfor%}
+</table>
+{%else %}
+<div> Ask some questions!</div>
+{%endif%}
+{% endblock %}

@@ -15,6 +15,8 @@ function postAnswer(questionId, vote, userScore){
 	$('#msgText'+questionId).text(thankyou+text);
 	if (numOfCalls == numOfVisibleRows)
 	{
+	    $('#questions_table').hide()
+	    $('#divreload').show()
 	    $('#reload').show()
 	}
 	$.ajax({

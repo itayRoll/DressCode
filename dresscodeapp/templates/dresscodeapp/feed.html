@@ -58,6 +58,10 @@ font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;wor
 {
 font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
 }
+.mycss5
+{
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;left: 50%;
+}
 
 </style>
 
@@ -78,7 +82,7 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
 				</p>
 				<p class="mycss2">{{ question.description }} </p>
 			</div>
-			<br></br>
+			<br>
 
 			<div class="cf" align="middle">
 				<img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
@@ -133,14 +137,15 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
 	</tr>
 	{%endfor%}
 </table>
-<div id="reload" hidden="true">
-	<button type="button" class="my-btn" onclick="reload()">
-		<span class="glyphicon glyphicon-thumbs-down"></span>
-		<b>Load more Looks!</b>
-	</button>
+<div id="divreload" class="cf" valign="bottom" style="width:100%" hidden="true">
+     <button id="reload" style="position: relative; left: 50%;" type="button" class="my-btn" onclick="reload()">
+        <b>Load more Looks!</b>
+    </button>
 </div>
 {%else %}
-<div> no new questions for you! ask your own!</div>
+<div style="width:100%">
+    <p class="mycss5" style="position: relative; left: 50%;">No new questions for you! ask your own!</p>
+</div>
 {%endif%}
 {% endblock %}
 
