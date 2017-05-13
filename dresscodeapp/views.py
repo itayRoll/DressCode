@@ -285,6 +285,12 @@ def get_results(request):
 
     return render(request, 'dresscodeapp/results.html', {'questions': questions_feed})
 
+@login_required(login_url='/home/')
+def get_profile(request):
+    curr_username = request.user.username
+    fuser = Fuser.objects.get(user__username=curr_username)
+    return render(request, 'dresscodeapp/userprofile.html',{'user':fuser})
+
 
 @login_required(login_url='/home/')
 def view_result(request):

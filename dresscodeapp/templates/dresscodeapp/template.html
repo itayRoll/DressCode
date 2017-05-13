@@ -48,7 +48,8 @@ footer {background: black;color:white; align-text padding: 10px; text-align: cen
   <a href="/filterquestions" class="w3-bar-item w3-button">Filter top looks</a>
 
   {% if user.is_authenticated %}
-    <h6><a href="{%  url 'logout_user' %}" class="w3-bar-item w3-button w3-right">{{ user.username }}  (logout)</a></h6>
+    <a href="{%  url 'logout_user' %}" class="w3-bar-item w3-button w3-right">{{ user.username }}  (logout)</a>
+    <a href="/userprofile" class="w3-bar-item w3-button w3-right">Your profile</a>
   {% endif %}
   <!-- <a class="w3-bar-item w3-button w3-right">Hello {{ request.user.username }}!</a> -->
 </div>

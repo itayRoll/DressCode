@@ -1,3 +1,16 @@
+<style>
+
+.my-btn{background-color: #000000;
+                      color: white;
+                      padding: 12px 20px;
+                      margin: 10px 2px;
+                      border: none;
+                      cursor: pointer;
+                      text-align: center;
+		}
+
+</style>
+
 {%  extends 'dresscodeapp/template.html' %}
 
 
@@ -73,7 +86,7 @@
 										<br>
 										</div>
 										<div style="text-align:center"> 
-										<input type="submit" class="btn btn-success  btn-lg" value="Filter questions" onclick="filterQuestions()" >
+										<input type="submit" class="my-btn" value="Filter questions" onclick="filterQuestions()" >
 										</div>  
 											<div id="output" class="panel-heading"/>
 
