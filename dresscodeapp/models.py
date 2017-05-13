@@ -42,6 +42,7 @@ class Question(models.Model):
 	due_date = models.DateTimeField(null=True)
 	clothing_items = models.ManyToManyField('ClothingItem')
 	items_not_as_pic = models.BooleanField(default=False)
+	is_system_question = models.BooleanField(default=False)
 	# items_not_as_pic = models.IntegerField(default=0)
 
 	def __str__(self):
