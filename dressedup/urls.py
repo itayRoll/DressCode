@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^login-user/$', views.login_user, name='login_user'),
     url(r'^signup-user/$', views.signup_user, name='signup_user'),
     url(r'^logout-user/$', views.logout_user, name='logout_user'),
+    url(r'^userprofile/$', views.get_profile, name='get_profile')
     # url(r'^ask/$', views.post_question, name='post_question'),
 
 ]
