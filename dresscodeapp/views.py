@@ -15,6 +15,7 @@ SPAM_ANSWERS_GAP = 10
 USER_SCORE_FOR_NEW_ANSWER = 1
 USER_SCORE_FOR_NEW_QUESTION = 7
 MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
+MIN_ANSWERS_TO_DETERMINE_SIMILAR_USER = 3
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -174,7 +175,7 @@ def find_spammer_by_answer(question_id, answerer_name, vote):
         elif vote == '2':
             curr_vote_num = no_fit_vote
 
-        if curr_vote_num / float(num_answers_items) < 0.5:  # less than 10% think tha same as the answerer
+        if curr_vote_num / float(num_answers_items) < 0.1:  # less than 10% think tha same as the answerer
             update_spammer_credit(answerer_name)
 
 
@@ -287,13 +288,19 @@ def view_result(request):
 def view_question(request, q_pk):
     question = Question.objects.get(pk=q_pk)
     answers = Answer.objects.filter(question_id=q_pk)
+    similar_users_answers = Answer.objects.filter(question_id=q_pk,
+                                                  user__in=get_similar_users(list(Fuser.objects.all()),
+                                                                             request.user.username))
 
     # we will not negotiate with terrorists!!
     answers = Answer.objects.filter(pk__in=answers).exclude(user__spammer=True)
+    similar_users_answers = Answer.objects.filter(pk__in=similar_users_answers).exclude(user__spammer=True)
     fit, no_fit, partial_fit = get_answers_rate(answers)
+    s_fit, s_no_fit, s_partial_fit = get_answers_rate(similar_users_answers)
 
     return render(request, 'dresscodeapp/question-result.html',
-                  {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit, 'filter': False})
+                  {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit,
+                   's_fit': s_fit, 's_no_fit': s_no_fit, 's_partial_fit': s_partial_fit, 'filter': False})
 
 
 @login_required(login_url='/home/')
@@ -340,14 +347,18 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
             relevant_users = Fuser.objects.filter(pk__in=relevant_users, dob__gte=min_date, dob__lte=max_date)
 
     answers = Answer.objects.filter(question_id=q_pk, user__in=relevant_users)
+    similar_users_answers = Answer.objects.filter(question_id=q_pk, user__in=get_similar_users(relevant_users, request.user.username))
 
     # we will not negotiate with terrorists!!
     answers = Answer.objects.filter(pk__in=answers).exclude(user__spammer=True)
+    similar_users_answers = Answer.objects.filter(pk__in=similar_users_answers).exclude(user__spammer=True)
     fit, no_fit, partial_fit = get_answers_rate(answers)
+    s_fit, s_no_fit, s_partial_fit = get_answers_rate(similar_users_answers)
 
     return render(request, 'dresscodeapp/question-result.html',
-                  {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit, 'filter': True,
-                   'filter_text': filter_text})
+                  {'question': question, 'fit': fit, 'no_fit': no_fit, 'partial_fit': partial_fit,
+                   's_fit': s_fit, 's_no_fit': s_no_fit, 's_partial_fit': s_partial_fit,
+                   'filter': True, 'filter_text': filter_text})
 
 
 def get_filter_text(gender, minage, maxage):
@@ -388,3 +399,28 @@ def get_answers_rate(answers):
     answers_partial_fit = Answer.objects.filter(pk__in=answers, vote='0')
 
     return len(answers_fit), len(answers_no_fit), len(answers_partial_fit)
+
+
+def get_similar_users(users, curr_username):
+    similar_users = []
+    akser_answers = dict((a.question_id, int(a.vote)) for a in Answer.objects.filter(user__user__username=curr_username))
+    for user in users:
+        if user.user.username == curr_username:
+            continue
+        user_answers = dict((a.question_id, int(a.vote)) for a in Answer.objects.filter(user=user))
+        similar_questions = list(set(akser_answers.keys()).intersection(user_answers.keys()))
+        same_rate = 0
+        similar_rate = 0
+        total_questions = float(len(similar_questions))
+        if total_questions >= MIN_ANSWERS_TO_DETERMINE_SIMILAR_USER:
+            for question_id in similar_questions:
+                if akser_answers[question_id] == user_answers[question_id]:
+                    same_rate += 1
+                # means someone vote maybe and the other voted yes or no
+                elif akser_answers[question_id] == 0 or user_answers[question_id] == 0:
+                    similar_rate += 1
+
+            if ((same_rate / total_questions) + 0.5 * (similar_rate / total_questions)) >= 0.51:
+                similar_users.append(user)
+
+    return similar_users

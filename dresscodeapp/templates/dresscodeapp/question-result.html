@@ -81,8 +81,11 @@ font-weight:bold;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-
     var fit = "{{ fit }}"
     var n_fit = "{{ no_fit }}"
     var p_fit = "{{ partial_fit }}"
+    var s_fit = "{{ s_fit }}"
+    var s_n_fit = "{{ s_no_fit }}"
+    var s_p_fit = "{{ s_partial_fit }}"
     var filter = "{{ filter }}"
-    google.setOnLoadCallback(function() { drawChart(fit, n_fit, p_fit, filter); });
+    google.setOnLoadCallback(function() { drawChart(fit, n_fit, p_fit,s_fit, s_n_fit, s_p_fit, filter); });
 </script>
 
 <div id="main" class="content container">
