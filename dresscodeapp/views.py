@@ -105,9 +105,10 @@ def return_filtered_results(request):
     gender = request.POST.get('gender')
     all_items = request.POST.get('items_lst').split("#")
     items_lst = []
-    for item_str in all_items:
-        n, c, p = item_str.split(',')
-        items_lst.append(ClothingItem(name=n, color=c, pattern=p))
+    if all_items != [u'']:
+        for item_str in all_items:
+            n, c, p = item_str.split(',')
+            items_lst.append(ClothingItem(type=n, color=c, pattern=p))
     answered_ids = [a.question_id for a in
                     Answer.objects.filter(user__user__username=curr_username)]  # questions answered by user
 
