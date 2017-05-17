@@ -45,7 +45,7 @@ class Question(models.Model):
 	# items_not_as_pic = models.IntegerField(default=0)
 
 	def __str__(self):
-		return self.title
+		return '{0}: {1}'.format(self.pk, self.title)
 
 
 class Answer(models.Model):
@@ -92,6 +92,7 @@ class ClothingItem(models.Model):
 		('10','SUIT'),
 		('11', 'PANTS'),
 		('12', 'SKIRT'),
+		('13', 'JEANS'),
 	)
 
 	PATTERN = (
@@ -107,10 +108,25 @@ class ClothingItem(models.Model):
 	pattern = models.CharField(max_length=2, choices=PATTERN, null=True)
 	question_id = models.IntegerField(null=True)
 
-	#def __str__(self):
-	#	return '{0} {1}'.format(self.color[1], self.type[1])
+	# def __str__(self):
+	# 	col_val = 0
+	# 	typ_val = 0
+	# 	pat_val = 0
+	# 	for tup in self.COLORS:
+	# 		if self.color == str(tup[1]):
+	# 			col_val = str(tup[1])
+	# 			break
+	# 	for tup2 in self.TYPES:
+	# 		if self.type.replace('-', '') == str(tup2[1]):
+	# 			typ_val = str(tup2[1])
+	# 			break
+	# 	for tup3 in self.PATTERN:
+	# 		if self.pattern == str(tup3[1]):
+	# 			pat_val = str(tup3[1])
+	# 			break
+	# 	return '{0}- Color: {1}, Pattern: {2}'.format(typ_val, col_val, pat_val)
 
-	def __eq__(self, other):
-		return self.color == other.color and self.type == other.type and self.color == other.color
+	def __str__(self):
+		return '{0} - {1} - {2}'.format(self.type, self.color, self.pattern)
 
 

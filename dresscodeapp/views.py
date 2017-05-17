@@ -53,7 +53,7 @@ def signup_user(request):
         username = request.POST['uname']
         password = request.POST['psw']
         confirm_password = request.POST['confirm-psw']
-        if not password == confirm - psw:
+        if not password == confirm_password:
             return HttpResponseRedirect('/home/')
         email = request.POST['email']
         gender = request.POST['gender']
@@ -92,11 +92,8 @@ def post_question_page(request):
 @login_required(login_url='/home/')
 def filter_questions_page(request):
     # passed validations
-    clothingItems = [x[1] for x in ClothingItem.TYPES]
-    colors = [x[1] for x in ClothingItem.COLORS]
-    patterns = [x[1] for x in ClothingItem.PATTERN]
     return render(request, 'dresscodeapp/filterquestions.html',
-                  {'clothingItems': clothingItems, 'colors': colors, 'patterns': patterns})
+                  {'clothingItems': ClothingItem.TYPES, 'colors': ClothingItem.COLORS, 'patterns': ClothingItem.PATTERN})
 
 
 @login_required(login_url='/home/')
@@ -105,19 +102,33 @@ def return_filtered_results(request):
     gender = request.POST.get('gender')
     all_items = request.POST.get('items_lst').split("#")
     items_lst = []
-    if all_items != [u'']:
+    if len(all_items) > 0 and len(all_items[0]) > 0:
         for item_str in all_items:
             n, c, p = item_str.split(',')
-            items_lst.append(ClothingItem(type=n, color=c, pattern=p))
-    answered_ids = [a.question_id for a in
-                    Answer.objects.filter(user__user__username=curr_username)]  # questions answered by user
+            try:
+                items_lst.append(ClothingItem.objects.get(type=n, color=c, pattern=p))
+            except:
+                return render(request, 'dresscodeapp/filteredresults.html', {'questions': []})
+    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]  # questions answered by user
 
     # retrieve questions answered by specified gender, from future, not asked by user nor answered by him
-    questions_feed = [q for q in Question.objects.filter(user__gender=gender,
-                                                         due_date__gte=timezone.now()).exclude(
-        user__user__username=curr_username).order_by('-published_date')[:2] if q.pk not in answered_ids
-                      and any([it in q.clothing_items.all() for it in items_lst])]
-    return render(request, 'dresscodeapp/filteredresults.html', {'questions': questions_feed})
+    if len(gender) > 0:
+        questions_feed = Question.objects.filter(user__gender=gender.lower()[:1], due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
+        final_cut = []
+        for q in questions_feed:
+            for ci in q.clothing_items.all():
+                if ci not in items_lst:
+                    break
+            final_cut.append(q)
+    else:
+        questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
+        final_cut = []
+        for q in questions_feed:
+            for ci in q.clothing_items.all():
+                if ci not in items_lst:
+                    break
+            final_cut.append(q)
+    return render(request, 'dresscodeapp/filteredresults.html', {'questions': final_cut})
 
 
 @login_required(login_url='/home/')
@@ -246,7 +257,7 @@ def post_question(request):
                                               pattern=sub_items[2].upper())
         if not db_item:
             db_item = ClothingItem(color=sub_items[1].upper(), type=sub_items[0].upper(),
-                                   pattern=sub_items[2].upper())
+                                   pattern=sub_items[2].upper(), question_id=question.pk)
             db_item.save()
         else:
             db_item = db_item[0]

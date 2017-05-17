@@ -21,7 +21,7 @@
 									<p> {{ question.due_date }} </p>
 									<p>{% if question.clothing_items%}
                             {% for clothing_item in question.clothing_items.all %}
-										<li>{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</li>
+										<li>{{ clothing_item.get_type_display }}- Color: {{ clothing_item.get_color_display }}, Pattern: {{ clothing_item.get_pattern_display }}</li>
                             {% endfor %}
                             {%endif%}</p>
 								</div>

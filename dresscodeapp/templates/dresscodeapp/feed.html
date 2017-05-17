@@ -91,7 +91,7 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 					<p>{% if question.clothing_items%}
 									<p class="mycss4"> Clothing items:</p>
 									{% for clothing_item in question.clothing_items.all %}
-									<p class="mycss3">{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</p>
+									<p class="mycss3">{{ clothing_item.get_type_display }}- Color: {{ clothing_item.get_color_display }}, Pattern: {{ clothing_item.get_pattern_display }}</p>
 									{% endfor %}
 						{%endif%}
 					</p>
@@ -101,10 +101,11 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 				<p>
 					<br>
 				</p>
-				<div class="checkbox">
+				<a href="#" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">Toggle popover</a>
+				<!-- <div class="checkbox">
 					<label>
 						<input type="checkbox" value="" id="checkbox{{ question.pk }}">Clothing items don't fit the photo</label>
-				</div>
+				</div> -->
 				<p>
 					<br>
 				</p>

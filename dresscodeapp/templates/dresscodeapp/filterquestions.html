@@ -16,7 +16,7 @@
 									<select class="form-control">
 										<option value="" selected disabled>Item</option>
 							{% for item in clothingItems %}  
-										<option>{{item}}</option>
+										<option value="{{ item.0 }}">{{item.1}}</option>
 							{%endfor%}
 									</select>
 								</td>
@@ -24,7 +24,7 @@
 									<select class="form-control">
 										<option value="" selected disabled>Color</option>
 								{% for color in colors %}  
-										<option>{{color}}</option>
+										<option value="{{ color.0 }}">{{color.1}}</option>
 								{%endfor%}
 									</select>
 								</td>
@@ -32,7 +32,7 @@
 									<select class="form-control">
 										<option value="" selected disabled>Pattern</option>
 								{% for pattern in patterns%}
-										<option>{{pattern}}</option>
+										<option value="{{ pattern.0 }}">{{pattern.1}}</option>
 								{%endfor%}
 									</select>
 								</td>
@@ -59,9 +59,9 @@
 								<div class="form-group">
 									<select id="gender" class="form-control">
 										<option value="" selected disabled>Gender</option>
-										<option>Male</option>
-										<option>Female</option>
-										<option>Unknowen</option>
+										<option value="m">Male</option>
+										<option value="f">Female</option>
+										<option value="u">Unknown</option>
 									</select>
 								</div>
 							</div>

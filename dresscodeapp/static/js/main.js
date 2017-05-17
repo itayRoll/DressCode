@@ -1,6 +1,7 @@
 var numOfCalls = 0
-function postAnswer(questionId, vote, userScore){
-    numOfCalls = numOfCalls+1
+
+function postAnswer(questionId, vote, userScore) {
+  numOfCalls = numOfCalls+1
 	// add loading animation to button
 	$('#thanks'+questionId).show()
 	$('#question'+questionId).hide()
@@ -39,6 +40,7 @@ function postAnswer(questionId, vote, userScore){
   			}
 		});
 }
+
 function reload() {
 	location.reload();
 }
@@ -78,7 +80,6 @@ function filterQuestions(){
     }
 
     post('/filteredresults/', {'gender': gender, 'items_lst': items_lst, csrfmiddlewaretoken: CSRF_TOKEN});
-
 }
 
 
@@ -146,25 +147,25 @@ function filterResults(questionId){
         max = "0"
     }
 
-	$.ajax({
-				url: "/view-result/",
-				type: 'POST',
-				data: {
-				    'minAge': min,
-				    'maxAge': max,
-				    'gender':gender,
-					'question_id': questionId,
-					csrfmiddlewaretoken: CSRF_TOKEN,
-				},
-			success: function(response) {
-  				result = JSON.parse(response);  // Get the results sended from ajax to here
-  				if (result.error) {
-      				// Error
-      				alert(result.error_text);
-  				} else {
-              		//alert("Your question was posted successfully!\nLet's answer other users questions!")
-              		window.location.replace("/view-result-filter/"+result["q_id"]+"/"+result["gender"]+"/"+result["minAge"]+"/"+result["maxAge"]+"/");
-      			}
-  			}
-		});
+  	$.ajax({
+  				url: "/view-result/",
+  				type: 'POST',
+  				data: {
+  				    'minAge': min,
+  				    'maxAge': max,
+  				    'gender':gender,
+  					'question_id': questionId,
+  					csrfmiddlewaretoken: CSRF_TOKEN,
+  				},
+  			success: function(response) {
+    				result = JSON.parse(response);  // Get the results sended from ajax to here
+    				if (result.error) {
+        				// Error
+        				alert(result.error_text);
+    				} else {
+                		//alert("Your question was posted successfully!\nLet's answer other users questions!")
+                		window.location.replace("/view-result-filter/"+result["q_id"]+"/"+result["gender"]+"/"+result["minAge"]+"/"+result["maxAge"]+"/");
+        			}
+    			}
+  		});
 }
