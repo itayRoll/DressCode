@@ -62,6 +62,10 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
 {
 font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;left: 50%;
 }
+.mycss6
+{
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1.5;margin:0px;padding:5px;left: 50%;
+}
 
 </style>
 
@@ -70,6 +74,15 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 {%  extends 'dresscodeapp/template.html' %}
 {% load staticfiles %}
 {% block content %}
+<div id="gettoknoeyou" style="width:100%">
+	<p class="mycss6" >
+		Before you ask your own questions and help other users get their perfect looks, we wish to get to know you better!
+		<br>
+		Please answer the following questions:
+	</p>
+	<br>
+	<br>
+</div>
 {%if questions %}
 <table  class="center" id="questions_table"  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg" >
 	{% for question in questions%}
@@ -91,7 +104,7 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 					<p>{% if question.clothing_items%}
 									<p class="mycss4"> Clothing items:</p>
 									{% for clothing_item in question.clothing_items.all %}
-									<p class="mycss3">{{ clothing_item.get_type_display }}- Color: {{ clothing_item.get_color_display }}, Pattern: {{ clothing_item.get_pattern_display }}</p>
+									<p class="mycss3">{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</p>
 									{% endfor %}
 						{%endif%}
 					</p>
@@ -101,11 +114,10 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 				<p>
 					<br>
 				</p>
-				<a href="#" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">Toggle popover</a>
-				<!-- <div class="checkbox">
+				<div class="checkbox" hidden="true">
 					<label>
 						<input type="checkbox" value="" id="checkbox{{ question.pk }}">Clothing items don't fit the photo</label>
-				</div> -->
+				</div>
 				<p>
 					<br>
 				</p>
@@ -127,8 +139,8 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 				</button>
 			</div>
 			<br>
-			<br></br>
-			<br></br>
+			<br>
+			<br>
 
 		</td>
 		<td id="thanks{{ question.pk }}" hidden="true">
@@ -139,13 +151,12 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 	{%endfor%}
 </table>
 <div id="divreload" class="cf" valign="bottom" style="width:100%" hidden="true">
-     <button id="reload" style="position: relative; left: 50%;" type="button" class="my-btn" onclick="reload()">
-        <b>Load more Looks!</b>
+	<p class="mycss6"  style="text-align:center;">
+		Thank you! Now we know you better!
+	</p>
+	 <button id="reload" type="button" class="my-btn" onclick="feed()">
+        <b>Go to my news feed</b>
     </button>
-</div>
-{%else %}
-<div style="width:100%">
-    <p class="mycss5" style="position: relative; align:middle">No new questions for you! ask your own!</p>
 </div>
 {%endif%}
 {% endblock %}

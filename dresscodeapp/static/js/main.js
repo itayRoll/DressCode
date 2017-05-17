@@ -17,6 +17,7 @@ function postAnswer(questionId, vote, userScore) {
 	if (numOfCalls == numOfVisibleRows)
 	{
 	    $('#questions_table').hide()
+	    $('#gettoknoeyou').hide()
 	    $('#divreload').show()
 	    $('#reload').show()
 	}
@@ -43,6 +44,10 @@ function postAnswer(questionId, vote, userScore) {
 
 function reload() {
 	location.reload();
+}
+
+function feed() {
+	window.location.href = '../questionsfeed/'
 }
 
 function toggle_by_id(cls, on) {

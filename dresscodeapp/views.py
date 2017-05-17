@@ -70,10 +70,9 @@ def signup_user(request):
             fuser = Fuser(user=user, gender=gender, dob=datetime.strptime(dob, "%m/%d/%Y").date())
             fuser.save()
     user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            return HttpResponseRedirect('/home/')
+    if user is not None and user.is_active:
+        login(request, user)
+        return HttpResponseRedirect('/initial-feed/')
     return HttpResponseRedirect('/questionsfeed/')
 
 
@@ -203,12 +202,30 @@ def update_spammer_credit(name):
 def get_questions_feed(request):
     curr_username = request.user.username
     answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
+    questions_feed = [q for q in
+                      [q for q in Question.objects.filter(is_system_question=True)] if q.pk not in answered_ids]
+    if len(questions_feed) != 0:
+        return HttpResponseRedirect('/initial-feed/')
+
 
     # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
     questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(
         user__user__username=curr_username).order_by(
         'due_date')[:5] if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids]
     return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
+
+@login_required(login_url='/home/')
+def get_initial_feed(request):
+    curr_username = request.user.username
+    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
+
+    # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
+    questions_feed = [q for q in
+                      [q for q in Question.objects.filter(is_system_question=True)] if q.pk not in answered_ids]
+    if len(questions_feed) == 0:
+        return HttpResponseRedirect('/questionsfeed/')
+    else:
+        return render(request, 'dresscodeapp/initial_feed.html', {'questions': questions_feed})
 
 
 @login_required(login_url='/home/')
@@ -248,7 +265,8 @@ def post_question(request):
         title=title,
         description=description,
         photo_path=photo_path,
-        due_date=date
+        due_date=date,
+        is_system_question=False,
     )
     question.save()
     for item in all_items:
@@ -277,6 +295,12 @@ def get_results(request):
     questions_feed = Question.objects.filter(user__user__username=curr_username)
 
     return render(request, 'dresscodeapp/results.html', {'questions': questions_feed})
+
+@login_required(login_url='/home/')
+def get_profile(request):
+    curr_username = request.user.username
+    fuser = Fuser.objects.get(user__username=curr_username)
+    return render(request, 'dresscodeapp/userprofile.html',{'user':fuser})
 
 
 @login_required(login_url='/home/')

@@ -1,10 +1,25 @@
+<style>
+
+.my-btn{background-color: #000000;
+                      color: white;
+                      padding: 12px 20px;
+                      margin: 10px 2px;
+                      border: none;
+                      cursor: pointer;
+
+
+
+                      text-align: center;
+		}
+
+</style>
 {%  extends 'dresscodeapp/template.html' %}
 
 {% block content %}
 <div class="container">
    <div class="panel panel-default">
       <div class="panel-body">
-		  {% if score > 10 %}
+		  {% if score >= 10 %}
          <div class="row">
 	         <div class='col-md-6'>
 	               <div class="form-group">
@@ -98,7 +113,7 @@
          <input type="file" id="pic" name="pic" accept="image/*">
          <div><br></div>
          <div style="text-align:center"> 
-         <input type="submit" class="btn btn-success  btn-lg" value="Submit" onclick="postQuestion()" >
+         <input type="submit" class="my-btn" value="Submit" onclick="postQuestion()" >
          </div>
 		  {%else%}
 		  <div>
