@@ -112,7 +112,7 @@ def return_filtered_results(request):
 
     # retrieve questions answered by specified gender, from future, not asked by user nor answered by him
     if len(gender) > 0:
-        questions_feed = Question.objects.filter(user__gender=gender.lower()[:1], due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
+        questions_feed = Question.objects.filter(user__gender=gender, due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
         final_cut = []
         for q in questions_feed:
             for ci in q.clothing_items.all():

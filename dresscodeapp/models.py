@@ -88,7 +88,6 @@ class ClothingItem(models.Model):
 		('5','SHOES'),
 		('6','HOODIE'),
 		('7','DRESS'),
-		('8','LONG PANTS'),
 		('9','SWIM SUIT'),
 		('10','SUIT'),
 		('11', 'PANTS'),
