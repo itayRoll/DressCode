@@ -193,9 +193,9 @@ and is wrapped around the whole page content, except for the footer in this exam
       <input type="hidden" name="next" value="{{ request.GET.next }}" />
     </div>
 
-    <div class="container" style="background-color:#f1f1f1">
-      <span class="psw">Forgot <a href="#">password?</a></span>
-    </div>
+    <!-- <div class="container" style="background-color:#f1f1f1"> -->
+      <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
+    <!-- </div> -->
   </form>
 </div>
 
@@ -210,8 +210,8 @@ and is wrapped around the whole page content, except for the footer in this exam
     <div class="container">
       <!-- <label><b>Username</b></label> -->
       <input type="text" placeholder="Username" name="uname" required>
-      <input id="password" type="password" placeholder="Password" name="psw" required>
-      <input id="confirm_password" type="password" placeholder="Confirm Password" name="confirm-psw" required>
+      <input id="password" type="password" placeholder="Password" name="psw" required onkeyup="checkPasswordMatch()">
+      <input id="confirm_password" type="password" placeholder="Confirm Password" name="confirm-psw" required onkeyup="checkPasswordMatch()">
       <input type="text" placeholder="Email" name="email" required>
       <div class="form-group">
         <select style="width:90%; margin-top: 16px; margin-bottom: 26px;" class="form-control" id="sel1" name="gender" required>
@@ -228,7 +228,7 @@ and is wrapped around the whole page content, except for the footer in this exam
             </div>
           </div>
       </div>
-      <button  class="btn" style="background-color: #000000;
+      <button id="signUpBtn" class="btn" style="background-color: #000000;
                       color: white;
                       padding: 14px 20px;
                       margin: 8px 0;

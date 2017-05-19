@@ -113,20 +113,9 @@ def return_filtered_results(request):
     # retrieve questions answered by specified gender, from future, not asked by user nor answered by him
     if len(gender) > 0:
         questions_feed = Question.objects.filter(user__gender=gender, due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
-        final_cut = []
-        for q in questions_feed:
-            for ci in q.clothing_items.all():
-                if ci not in items_lst:
-                    break
-            final_cut.append(q)
     else:
         questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
-        final_cut = []
-        for q in questions_feed:
-            for ci in q.clothing_items.all():
-                if ci not in items_lst:
-                    break
-            final_cut.append(q)
+    final_cut = [q for q in questions_feed if all([ci in q.clothing_items.all() for ci in items_lst])]
     return render(request, 'dresscodeapp/filteredresults.html', {'questions': final_cut})
 
 

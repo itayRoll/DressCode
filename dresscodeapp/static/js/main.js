@@ -174,3 +174,16 @@ function filterResults(questionId){
     			}
   		});
 }
+
+function checkPasswordMatch() {
+    var password = $("#password").val();
+    var confirmPassword = $("#confirm_password").val();
+
+    if (password != confirmPassword){
+        document.getElementById("confirm_password").style.borderColor = "red";
+        document.getElementById("signUpBtn").disabled = true;
+    } else {
+        document.getElementById('confirm_password').style.removeProperty('border');
+        document.getElementById("signUpBtn").disabled = false;
+    }
+}
