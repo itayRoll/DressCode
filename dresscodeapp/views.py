@@ -289,7 +289,7 @@ def get_results(request):
 def get_profile(request):
     curr_username = request.user.username
     fuser = Fuser.objects.get(user__username=curr_username)
-    return render(request, 'dresscodeapp/userprofile.html',{'user':fuser})
+    return render(request, 'dresscodeapp/userprofile.html',{'curruser':fuser})
 
 
 @login_required(login_url='/home/')

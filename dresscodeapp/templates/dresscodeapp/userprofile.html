@@ -39,7 +39,7 @@ img {
 
 .mycss
 {
-font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:40px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
  padding: 12px 20px;
 }
 
@@ -61,7 +61,7 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
 
 .mycss6
 {
-font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;font-size: 130%;
+font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:18px;text-align:middle;line-height:1;margin:0px;padding:5px;font-size: 110%;
 }
 </style>
 {%  extends 'dresscodeapp/template.html' %}
@@ -70,37 +70,38 @@ font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;wor
 <table id="questions_table" class="center"  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg" >
     <tr>
     <td>
+    <br>
     <div style="text-align:center">
     <p class="mycss">
-    Hello {{user.user}}
+    Hello {{curruser.user}}
     </p>
     <p class="mycss">
-    You have {{user.score}} points!
+    You have {{curruser.score}} points!
     </p>
     </div>
     <div style="text-align:left margin:0px;padding:120px;">
+    <img class="clothes" src="http://images.clipartpanda.com/clothes-clipart-wear-clothes-clipart-with-southern-girl-in-the-real-world-closet-conundrum.jpg" width="400" align="right" style="margin-right: -50px;">
     <p class="mycss6">
-    <b>Gender:</b> {{user.gender}}
+    <b><u>Gender:</u></b> {% if curruser.gender == 'f' %} Female {% else %} Man {% endif %} 
     </p>
     <br>
     <p class="mycss6">
-    <b>Birth date:</b> {{user.birth_date}}
+    <b><u>Birth date:</u></b> {{curruser.dob}}
     </p>
     <br>
     <p class="mycss6">
-    <b>Date joined:</b> {{user.date_joined}}
+    <b><u>Date joined:</u></b> {{curruser.date_joined}}
     </p>
     <br>
     <p class="mycss6">
-    <b>Questions number:</b> {{user.num_questions}}
+    <b><u>Questions number:</u></b> {{curruser.num_questions}}
     </p>
     <br>
     <p class="mycss6">
-    <b>Answers number:</b> {{user.num_answers}}
+    <b><u>Answers number:</u></b> {{curruser.num_answers}}
     </p>
     </div>
     </td>
-    
     </tr>
     
 </table>

@@ -64,7 +64,12 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 }
 .mycss6
 {
-font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1.5;margin:0px;padding:5px;left: 50%;
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;
+}
+
+.mycss7
+{
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:25px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;
 }
 
 </style>
@@ -74,8 +79,12 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 {%  extends 'dresscodeapp/template.html' %}
 {% load staticfiles %}
 {% block content %}
-<div id="gettoknoeyou" style="width:100%">
-	<p class="mycss6" >
+{%if questions %}
+<table  class="center" id="questions_table"  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg" >
+	<tr>
+	<td>
+	<div id="gettoknoeyou" style="width:100%">
+	<p class="mycss7" >
 		Before you ask your own questions and help other users get their perfect looks, we wish to get to know you better!
 		<br>
 		Please answer the following questions:
@@ -83,8 +92,11 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 	<br>
 	<br>
 </div>
-{%if questions %}
-<table  class="center" id="questions_table"  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg" >
+</td>
+</tr>
+
+	
+	
 	{% for question in questions%}
 	<tr>
 		<td id="question{{ question.pk }}">
