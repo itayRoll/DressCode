@@ -87,8 +87,8 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 			  <button id=report{{question.pk}} class="btn btn-primary-outline dropdown-toggle" type="button" data-toggle="dropdown" style="background-color: transparent;">
 			  <span class="glyphicon glyphicon-chevron-down"></span></button>
 			  <ul class="dropdown-menu pull-right" style="float:right;">
-			    <li><a href="#">Clothing items don't match the photo</a></li>
-			    <li><a href="#">Report photo as offensive</a></li>
+			    <li><a id="match{{question.pk}}" href="#">Clothing items don't match the photo</a></li>
+			    <li><a id="offensive{{question.pk}}" href="#">Report photo as offensive</a></li>
 			  </ul>
 			</div>
 			<div class="cf" align="middle">
