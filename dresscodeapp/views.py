@@ -11,11 +11,12 @@ from models import *
 from datetime import datetime, timedelta
 
 SPAM_SECONDS_GAP = 10
-SPAM_ANSWERS_GAP = 10
+SPAM_ANSWERS_GAP = 8
 USER_SCORE_FOR_NEW_ANSWER = 1
 USER_SCORE_FOR_NEW_QUESTION = 7
 MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
 MIN_ANSWERS_TO_DETERMINE_SIMILAR_USER = 3
+NUM_REPORTS_BEFORE_BAN = 15
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -37,10 +38,10 @@ def login_user(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
-                login(request, user)
-                if Fuser.objects.get(user__username=user.username).spammer:
+                if Fuser.objects.get(user__username=user.username).last_ban_timestamp+timedelta(hours=24) > timezone.now():
                     # logged in user is a spammer!
-                    pass
+                    return HttpResponseRedirect('/home/')
+                login(request, user)
                 if next_page != '':
                     return HttpResponseRedirect(next_page)
                 return HttpResponseRedirect('/questionsfeed/')
@@ -115,7 +116,8 @@ def return_filtered_results(request):
         questions_feed = Question.objects.filter(user__gender=gender, due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
     else:
         questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
-    final_cut = [q for q in questions_feed if all([ci in q.clothing_items.all() for ci in items_lst])]
+    reported_question_ids = [nr.question.pk for nr in NegativeReport.objects.filter(user__user__username=curr_username)]
+    final_cut = [q for q in questions_feed if all([ci in q.clothing_items.all() for ci in items_lst]) and not q.pk in reported_question_ids]
     return render(request, 'dresscodeapp/filteredresults.html', {'questions': final_cut})
 
 
@@ -132,17 +134,16 @@ def post_answer(request):
     spam_threshold = datetime.now() - timedelta(seconds=SPAM_SECONDS_GAP)
     recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold,
                                                       user__user__username=curr_username)
+    answerer = Fuser.objects.get(user__username=curr_username)
     if len(recently_answered_by_user) > SPAM_ANSWERS_GAP:
         # handle as spam (warning / log user out / kill user)
-        pass
-    # continue as usual
-    answerer = Fuser.objects.get(user__username=curr_username)
+        answerer.last_ban_timestamp = timezone.now()
+        return HttpResponseRedirect('/logout-user/')
     answerer.num_answers += 1
     answerer.score += USER_SCORE_FOR_NEW_ANSWER
     vote = request.POST['vote']
     question_pk = request.POST['question_id']
-    items_not_as_pic = request.POST.get('itemsNotAsPic') == u'true'
-    answer = Answer(vote=vote, question_id=question_pk, user=answerer, items_not_as_pic=items_not_as_pic)
+    answer = Answer(vote=vote, question_id=question_pk, user=answerer)
     answer.save()
     answerer.save()
     find_spammer_by_answer(question_pk, answerer.id, vote)
@@ -196,11 +197,11 @@ def get_questions_feed(request):
     if len(questions_feed) != 0:
         return HttpResponseRedirect('/initial-feed/')
 
-
     # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
+    reported_question_ids = [nr.question.pk for nr in NegativeReport.objects.filter(user__user__username=curr_username)]
     questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(
         user__user__username=curr_username).order_by(
-        'due_date')[:5] if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids]
+        'due_date')[:5] if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids and not q.pk in reported_question_ids]
     return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
 
 @login_required(login_url='/home/')
@@ -449,3 +450,25 @@ def get_similar_users(users, curr_username):
                 similar_users.append(user)
 
     return similar_users
+
+
+def negative_report(request):
+    curr_username = request.user.username
+    qpk = int(request.POST['qpk'])
+    question_reports_from_same_user = NegativeReport.objects.filter(question__pk=qpk, user__user__username=curr_username)
+    if not question_reports_from_same_user:
+        # register report
+        q = Question.objects.get(pk=qpk)
+        u = Fuser.objects.get(user__username=curr_username)
+        nr = NegativeReport(question=q, user=u)
+        nr.save()
+        question_negative_reports = NegativeReport.objects.filter(question=q)
+        if len(question_negative_reports) >= NUM_REPORTS_BEFORE_BAN:
+            # the asker is probably a spammer - ban him!
+            q.user.last_ban_timestamp = timezone.now()
+            q.user.save()
+        # approve report
+        return HttpResponse('true')
+    else:
+        # ignore report - user has already reported about this question
+        return HttpResponse('false')

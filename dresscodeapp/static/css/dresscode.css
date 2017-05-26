@@ -25,3 +25,93 @@
     background: #55ACEE;
     color: white;
 }
+
+.center{
+    position:absolute;
+    width:1150px;
+    height:650px;
+    
+    top:50%;
+    
+    margin-left:0%;
+
+}
+
+table {
+margin-bottom: 70px
+}
+
+.my-btn{
+    padding: 12px 20px;
+    margin: 10px 2px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.my-btn-yay {
+    background-color: #000000;
+    color: white;
+}
+
+.my-btn-yay:hover {
+    background-color: #68c47c;
+    color: white;
+}
+
+.my-btn-nay {
+    background-color: #000000;
+    color: white;
+}
+
+.my-btn-nay:hover {
+    background-color: #f95967;
+    color: white;
+}
+
+.my-btn-meh {
+    background-color: #000000;
+    color: white;
+}
+
+.my-btn-meh:hover {
+    background-color: #a39a99;
+    color: white;
+}
+        
+img {
+    display: inline-block;
+    vertical-align: middle;
+    width: 400px;
+    margin-right:10%;
+}
+.text {
+   display: inline-block;
+    vertical-align: middle;
+}
+
+.mycss
+{
+font-weight:normal;color:#FFFFFF;background-color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+ padding: 12px 20px;
+}
+
+.mycss2
+{
+font-weight:normal;color:#FFFFFF;background-color:#9E9E9E;letter-spacing:1pt;word-spacing:2pt;font-size:21px;text-align:middle;font-family:impact, sans-serif;line-height:1;margin:0px;padding:0px;
+padding: 5px 20px;
+}
+
+.mycss3
+{
+font-weight:normal;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
+}
+
+.mycss4
+{
+font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFFF;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:left;line-height:1;margin:0px;padding:10px;width:400px;
+}
+.mycss5
+{
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;left: 50%;
+}

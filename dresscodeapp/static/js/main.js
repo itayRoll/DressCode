@@ -1,14 +1,38 @@
 var numOfCalls = 0
 
+function sendNegativeReport(qpk) {
+  $.ajax({
+        url: "/negative-report/",
+        type: 'POST',
+        data: {
+          'qpk': qpk,
+          csrfmiddlewaretoken: CSRF_TOKEN,
+        },
+      success: function(response) {
+          if (response.localeCompare("true") == 0) {
+            // thanks for your feedback
+            alert("thanks for your feedback");
+            
+            // disable buttons
+            document.getElementById("report"+qpk).disabled = true;
+            document.getElementById("yay"+qpk).disabled = true;
+            document.getElementById("meh"+qpk).disabled = true;
+            document.getElementById("nay"+qpk).disabled = true;
+
+            // remove reported image
+            document.getElementById("pic"+qpk).style.display = "none";
+          } else {
+            alert("you already voted, we're looking into it");
+          }
+        }
+    });
+}
+
 function postAnswer(questionId, vote, userScore) {
   numOfCalls = numOfCalls+1
 	// add loading animation to button
 	$('#thanks'+questionId).show()
 	$('#question'+questionId).hide()
-    var itemsNotAsPic = false
-	if ($('#checkbox'+questionId)[0].checked) {
-        itemsNotAsPic = true
-	}
 	$('#thanks'+questionId).fadeOut(5000)
 	var numOfVisibleRows = $('#questions_table tr:visible').length
 	var thankyou = 'Thanks for answering!';
@@ -27,7 +51,6 @@ function postAnswer(questionId, vote, userScore) {
 				data: {
 					'question_id': questionId,
 					'vote': vote,
-					'itemsNotAsPic': itemsNotAsPic,
 					csrfmiddlewaretoken: CSRF_TOKEN,
 				},
 			success: function(response) {

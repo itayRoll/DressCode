@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 
 # Create your models here.
 
@@ -25,6 +26,7 @@ class Fuser(models.Model):
 	num_answers = models.IntegerField(default=0)
 	spammer_credit = models.IntegerField(default=0)
 	spammer = models.BooleanField(default=False)
+	last_ban_timestamp = models.DateTimeField(default=datetime.now()-timedelta(days=200))
 
 	def __str__(self):
 		return '{0}'.format(self.user)
@@ -130,3 +132,7 @@ class ClothingItem(models.Model):
 		return '{0} - {1} - {2}'.format(self.type, self.color, self.pattern)
 
 
+class NegativeReport(models.Model):
+	user = models.ForeignKey('Fuser', null=True)
+	report_time = models.DateTimeField(default=timezone.now)
+	question = models.ForeignKey('Question', null=True)
