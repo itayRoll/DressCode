@@ -128,15 +128,9 @@ span.psw {
 <body class="w3-light-grey">
 
 <!-- Navigation bar with social media icons -->
-<div class="w3-bar w3-black w3-hide-small">
-  <a href="/question/post" class="w3-bar-item w3-button">Ask question</a>
-  <a href="/myresults" class="w3-bar-item w3-button">Review your questions</a>
-  <a href="/questionsfeed" class="w3-bar-item w3-button">Answer questions</a>
-  <a href="/filterquestions" class="w3-bar-item w3-button">Filter top looks</a>
-
-  {% if user.is_authenticated %}
-    <h6><a href="{%  url 'logout_user' %}" class="w3-bar-item w3-button w3-right">{{ user.username }}  (logout)</a></h6>
-  {% endif %}
+<div class="w3-bar w3-black w3-hide-small">	
+<br>
+<br>
 </div>
   
 <!-- w3-content defines a container for fixed size centered content, 
