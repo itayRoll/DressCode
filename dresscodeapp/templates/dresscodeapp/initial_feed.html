@@ -72,105 +72,91 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:25px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;
 }
 
+
 </style>
-
-
-
 {%  extends 'dresscodeapp/template.html' %}
 {% load staticfiles %}
 {% block content %}
 {%if questions %}
-<table  class="center" id="questions_table"  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg" >
-	<tr>
-	<td>
-	<div id="gettoknoeyou" style="width:100%">
-	<p class="mycss7" >
-		Before you ask your own questions and help other users get their perfect looks, we wish to get to know you better!
-		<br>
-		Please answer the following questions:
-	</p>
-	<br>
-	<br>
-</div>
-</td>
-</tr>
-
-	
-	
-	{% for question in questions%}
-	<tr>
-		<td id="question{{ question.pk }}">
-
-			<div style="text-align:center">
-				<p class="mycss">
-						{{ question.title }}
-				</p>
-				<p class="mycss2">{{ question.description }} </p>
-			</div>
-			<br>
-
-			<div class="cf" align="middle">
-				<img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src=  "{% static question.photo_path %}" alt=""
-							class="img-thumbnail" style="width: 50%; height: 50%"/>
-				<div class="text">
-					<p>{% if question.clothing_items%}
-									<p class="mycss4"> Clothing items:</p>
-									{% for clothing_item in question.clothing_items.all %}
-									<p class="mycss3">{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</p>
-									{% endfor %}
-						{%endif%}
-					</p>
-				</div>
-			</div>
-			<div style="text-align:center">
-				<p>
-					<br>
-				</p>
-				<div class="checkbox" hidden="true">
-					<label>
-						<input type="checkbox" value="" id="checkbox{{ question.pk }}">Clothing items don't fit the photo</label>
-				</div>
-				<p>
-					<br>
-				</p>
-				<button id="yay{{ question.pk }}" type="button" class="my-btn"
-						onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})">
-					<span
-							class="glyphicon glyphicon-thumbs-up">
-					</span><b> PERFECT MATCH!</b>
-				</button>
-				<button id="meh{{ question.pk }}" type="button" class="my-btn"
-						onclick="postAnswer({{ question.pk }}, 0, {{ question.user.score }})">
-					<b>MAYBE TO SOMEWHERE ELSE</b>
-				</button>
-				<button id="nay{{ question.pk }}" type="button" class="my-btn"
-						onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})">
-					<span
-							class="glyphicon glyphicon-thumbs-down">
-					</span><b> DOESNT FIT</b>
-				</button>
-			</div>
-			<br>
-			<br>
-			<br>
-
-		</td>
-		<td id="thanks{{ question.pk }}" hidden="true">
-            <div align="center" id="msgText{{ question.pk }}" class="bg-success text-white"/>
-		</td>
-		<br/>
-	</tr>
-	{%endfor%}
+<table class="center" id="top_table">
+    <tr id="gettoknowyou">
+        <td>
+            <div style="width:100%"
+                 background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg">
+                <p class="mycss7">
+                    Before you ask your own questions and help other users get their perfect looks,
+                    <br>
+                    we wish to get to know you better!
+                    <br>
+                    Please answer the following questions:
+                </p>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="center" id="questions_table"
+                   background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg">
+                {% for question in questions%}
+                <tr>
+                    <td id="question{{ question.pk }}">
+                        <div style="text-align:center">
+                            <p class="mycss">
+                                {{ question.title }}
+                            </p>
+                            <p class="mycss2">{{ question.description }} </p>
+                        </div>
+                        <br>
+                        <div class="dropdown" style="float:right; margin-right: 10px;">
+                            <button id=report{{question.pk}} class="btn btn-primary-outline dropdown-toggle" type="button" data-toggle="dropdown" style="background-color: transparent;">
+                                <span class="glyphicon glyphicon-chevron-down"></span>
+                            </button>
+                        </div>
+                        <div class="cf" align="middle">
+                            <img id="pic{{ question.pk }}" style="border-radius: 20px 20px 20px 20px;" src="{% static question.photo_path %}" alt="" class="img-thumbnail" style="width: 50%; height: 50%"/>
+                            <div class="text">
+                                <p>
+                                    {% if question.clothing_items%}
+                                        <p class="mycss4"> Clothing items:</p>
+                                    {% for clothing_item in question.clothing_items.all %}
+                                        <p class="mycss3">{{ clothing_item.get_type_display }}- Color: {{
+                                        clothing_item.get_color_display }}, Pattern: {{ clothing_item.get_pattern_display}}</p>
+                                    {% endfor %}
+                                    {%endif%}
+                                </p>
+                            </div>
+                        </div>
+                        <div style="text-align:center">
+                            <p>
+                                <br>
+                            </p>
+                            <button id="yay{{ question.pk }}" type="button" class="my-btn my-btn-yay" style="border:2px solid; border-radius: 25px;" onclick="postPreAnswer({{ question.pk }}, 1, {{ questions|length }})">
+					            <span class="glyphicon glyphicon-thumbs-up"></span><b> PERFECT MATCH!</b>
+                            </button>
+                            <button id="meh{{ question.pk }}" type="button" class="my-btn my-btn-meh" style="border:2px solid; border-radius: 25px;" onclick="postPreAnswer({{ question.pk }}, 0,{{ questions|length }})">
+                                <b>MAYBE TO SOMEWHERE ELSE</b>
+                            </button>
+                            <button id="nay{{ question.pk }}" type="button" class="my-btn my-btn-nay" style="border:2px solid; border-radius: 25px;" onclick="postPreAnswer({{ question.pk }}, 2,{{ questions|length }})">
+                                <span class="glyphicon glyphicon-thumbs-down"></span><b> DOESNT FIT</b>
+                            </button>
+                        </div>
+                        <br>
+                        <br>
+                    </td>
+                    <td id="thanks{{ question.pk }}" hidden="true">
+                        <div align="center" id="msgText{{ question.pk }}" class="bg-success text-white"/>
+                    </td>
+                </tr>
+                {%endfor%}
+            </table>
+        </td>
+    </tr>
 </table>
 <div id="divreload" class="cf" valign="bottom" style="width:100%" hidden="true">
-	<p class="mycss6"  style="text-align:center;">
-		Thank you! Now we know you better!
-	</p>
-	 <button id="reload" type="button" class="my-btn" onclick="feed()">
+    <p class="mycss5" style="position: relative; align:middle">Thank you! Now we know you better!</p>
+    <button id="reload" type="button" class="my-btn" onclick="feed()" style="position: relative; left: 50%;">
         <b>Go to my news feed</b>
     </button>
 </div>
 {%endif%}
 {% endblock %}
-
-			

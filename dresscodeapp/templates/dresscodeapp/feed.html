@@ -38,30 +38,24 @@
 				<p>
 					<br>
 				</p>
-				<p>
-					<br>
-				</p>
 				<button id="yay{{ question.pk }}" type="button" class="my-btn my-btn-yay" style="border:2px solid; border-radius: 25px;"
-						onclick="postAnswer({{ question.pk }}, 1, {{ question.user.score }})">
+						onclick="postAnswer({{ question.pk }}, 1, {{ questions|length }},  {{ userscore }})">
 					<span
 							class="glyphicon glyphicon-thumbs-up">
 					</span><b> PERFECT MATCH!</b>
 				</button>
 				<button id="meh{{ question.pk }}" type="button" class="my-btn my-btn-meh" style="border:2px solid; border-radius: 25px;" 
-						onclick="postAnswer({{ question.pk }}, 0, {{ question.user.score }})">
+						onclick="postAnswer({{ question.pk }}, 0,{{ questions|length }},  {{ userscore }})">
 					<b>MAYBE TO SOMEWHERE ELSE</b>
 				</button>
 				<button id="nay{{ question.pk }}" type="button" class="my-btn my-btn-nay"  style="border:2px solid; border-radius: 25px;"
-						onclick="postAnswer({{ question.pk }}, 2, {{ question.user.score }})">
+						onclick="postAnswer({{ question.pk }}, 2,{{ questions|length }},  {{ userscore }})">
 					<span
 							class="glyphicon glyphicon-thumbs-down">
 					</span><b> DOESNT FIT</b>
 				</button>
 			</div>
 			<br>
-			<br></br>
-			<br></br>
-
 		</td>
 		<td id="thanks{{ question.pk }}" hidden="true">
             <div align="center" id="msgText{{ question.pk }}" class="bg-success text-white"/>

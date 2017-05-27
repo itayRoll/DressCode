@@ -1,6 +1,7 @@
 var numOfCalls = 0
+var userScoreGlobal = -1
 
-function sendNegativeReport(qpk) {
+function sendNegativeReport(qpk, numOfQuestions) {
   $.ajax({
         url: "/negative-report/",
         type: 'POST',
@@ -12,15 +13,7 @@ function sendNegativeReport(qpk) {
           if (response.localeCompare("true") == 0) {
             // thanks for your feedback
             alert("thanks for your feedback");
-            
-            // disable buttons
-            document.getElementById("report"+qpk).disabled = true;
-            document.getElementById("yay"+qpk).disabled = true;
-            document.getElementById("meh"+qpk).disabled = true;
-            document.getElementById("nay"+qpk).disabled = true;
-
-            // remove reported image
-            document.getElementById("pic"+qpk).style.display = "none";
+            postAnswer(qpk, -1, numOfQuestions, -1)
           } else {
             alert("you already voted, we're looking into it");
           }
@@ -28,41 +21,56 @@ function sendNegativeReport(qpk) {
     });
 }
 
-function postAnswer(questionId, vote, userScore) {
+function postPreAnswer(questionId, vote, numOfQuestions) {
+    postAnswer(questionId, vote, numOfQuestions, -1)
+}
+
+function postAnswer(questionId, vote, numOfQuestions, userScore) {
   numOfCalls = numOfCalls+1
-	// add loading animation to button
-	$('#thanks'+questionId).show()
-	$('#question'+questionId).hide()
-	$('#thanks'+questionId).fadeOut(5000)
-	var numOfVisibleRows = $('#questions_table tr:visible').length
-	var thankyou = 'Thanks for answering!';
-	var text = userScore > 10 ? '\nYou have enough credit. Post!' : 'Only '+ (10 - userScore) + ' to go';
-	$('#msgText'+questionId).text(thankyou+text);
-	if (numOfCalls == numOfVisibleRows)
+  if (vote >=0) {
+        // add loading animation to button
+        $('#thanks'+questionId).show()
+        $('#thanks'+questionId).fadeOut(5000)
+        var thankyou = 'Thanks for answering!';
+        var text="";
+        if (userScore >= 0) {
+            if (userScoreGlobal < 0) {
+                userScoreGlobal = userScore;
+            }
+            userScoreGlobal++;
+            text = userScoreGlobal >= 10 ? '\nYou have enough credit. Post!' : '\nOnly '+ (10 - userScoreGlobal) + ' to go';
+        }
+        $('#msgText'+questionId).text(thankyou+text);
+    }
+    $('#question'+questionId).hide()
+    $('#question_row'+questionId).fadeOut(5000)
+	if (numOfCalls == numOfQuestions)
 	{
 	    $('#questions_table').hide()
-	    $('#gettoknoeyou').hide()
+	    $('#gettoknowyou').hide()
 	    $('#divreload').show()
 	    $('#reload').show()
 	}
-	$.ajax({
-				url: "/post-answer/",
-				type: 'POST',
-				data: {
-					'question_id': questionId,
-					'vote': vote,
-					csrfmiddlewaretoken: CSRF_TOKEN,
-				},
-			success: function(response) {
-  				result = JSON.parse(response);  // Get the results sended from ajax to here
-  				if (result.error) {
-      				// Error
-      				alert(result.error_text);
-  				} else {
-              		// Success
-      			}
-  			}
-		});
+	if (vote >= 0) {
+        $.ajax({
+                    url: "/post-answer/",
+                    type: 'POST',
+                    data: {
+                        'question_id': questionId,
+                        'vote': vote,
+                        csrfmiddlewaretoken: CSRF_TOKEN,
+                    },
+                success: function(response) {
+                    result = JSON.parse(response);  // Get the results sended from ajax to here
+                    if (result.error) {
+                        // Error
+                        alert(result.error_text);
+                    } else {
+                        // Success
+                    }
+                }
+            });
+	}
 }
 
 function reload() {

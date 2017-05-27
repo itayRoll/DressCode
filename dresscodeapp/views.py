@@ -151,20 +151,19 @@ def post_answer(request):
 
 
 def find_spammer_by_answer(question_id, answerer_name, vote):
-    question = Question.objects.filter(pk=question_id)
+    question = Question.objects.filter(pk=question_id)[0]
     spammers = Fuser.objects.filter(spammer=True)
     answers_without_spammers = Answer.objects.filter(question_id=question_id).exclude(user__in=spammers)
-    num_answers_items_not_as_pic = len(
-        Answer.objects.filter(pk__in=answers_without_spammers).exclude(items_not_as_pic=False))
+    num_answers_items_not_as_pic = len(Answer.objects.filter(pk__in=answers_without_spammers).exclude(items_not_as_pic=False))
     num_answers_items = len(answers_without_spammers)
     if num_answers_items >= MIN_ANSWERS_TO_DETERMINE_SPAMMER:
         if num_answers_items / 2 + 1 < num_answers_items_not_as_pic:  # half the answerers think that question clothing items not as in pic
             # asker is spammer!
-            update_spammer_credit(question[0].user.id)
+            update_spammer_credit(question.user.id)
             question.items_not_as_pic = True
         elif not question.items_not_as_pic:
             question.items_not_as_pic = False
-        question[0].save()
+        question.save()
 
         fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='1'))
         no_fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='2'))
@@ -201,8 +200,9 @@ def get_questions_feed(request):
     reported_question_ids = [nr.question.pk for nr in NegativeReport.objects.filter(user__user__username=curr_username)]
     questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(
         user__user__username=curr_username).order_by(
-        'due_date')[:5] if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids and not q.pk in reported_question_ids]
-    return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed})
+        'due_date') if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids and not q.pk in reported_question_ids][:5]
+    fuser = Fuser.objects.filter(user__username=curr_username)
+    return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed, 'userscore': fuser[0].score})
 
 @login_required(login_url='/home/')
 def get_initial_feed(request):
@@ -274,6 +274,7 @@ def post_question(request):
 
     user = Fuser.objects.get(user__username=request.user.username)
     user.score -= USER_SCORE_FOR_NEW_QUESTION
+    user.num_questions+=1;
     user.save()
     return HttpResponse(json.dumps({'success': True}))
 

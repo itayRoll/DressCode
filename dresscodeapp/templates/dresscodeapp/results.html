@@ -82,7 +82,7 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
                     <p>{% if question.clothing_items%}
                         <p class="mycss4"> Clothing items:</p>
                             {% for clothing_item in question.clothing_items.all %}
-                                <p class="mycss3">{{ clothing_item.type }}- Color: {{ clothing_item.color }}, Pattern: {{ clothing_item.pattern }}</p>
+                                <p class="mycss3">{{ clothing_item.get_type_display }}- Color: {{ clothing_item.get_color_display }}, Pattern: {{ clothing_item.get_pattern_display }}</p>
                             {% endfor %}
                         {%endif%}
                     </p>
@@ -100,6 +100,8 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
     {%endfor%}
 </table>
 {%else %}
-<div> Ask some questions!</div>
+<div style="width:100%">
+    <p class="mycss5" style="position: relative; align:middle">Ask some questions!</p>
+</div>
 {%endif%}
 {% endblock %}
