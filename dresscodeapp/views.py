@@ -172,7 +172,10 @@ def post_answer(request):
     answer = Answer(vote=vote, question_id=question_pk, user=answerer)
     answer.save()
     answerer.save()
-    find_spammer_by_answer(question_pk, curr_username, vote)
+
+    question = Question.objects.get(pk=question_pk)
+    if not question.is_system_question:
+        find_spammer_by_answer(question_pk, curr_username, vote)
     return HttpResponse('success')
 
 
