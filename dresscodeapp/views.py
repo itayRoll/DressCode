@@ -1,5 +1,6 @@
 import json
 import os
+import operator
 
 from django.core.files.base import ContentFile
 from django.shortcuts import render
@@ -17,6 +18,7 @@ USER_SCORE_FOR_NEW_QUESTION = 7
 MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
 MIN_ANSWERS_TO_DETERMINE_SIMILAR_USER = 3
 NUM_REPORTS_BEFORE_BAN = 15
+NUM_TOP_LOOKS = 10
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -117,16 +119,23 @@ def return_filtered_results(request):
                 items_lst.append(ClothingItem.objects.get(type=n, color=c, pattern=p))
             except:
                 return render(request, 'dresscodeapp/filteredresults.html', {'questions': []})
-    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]  # questions answered by user
 
     # retrieve questions answered by specified gender, from future, not asked by user nor answered by him
     if len(gender) > 0:
-        questions_feed = Question.objects.filter(user__gender=gender, due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
+        questions_feed = Question.objects.filter(user__gender=gender)
     else:
-        questions_feed = Question.objects.filter(due_date__gte=timezone.now()).exclude(pk__in=answered_ids).order_by('-published_date')
+        questions_feed = Question.objects.filter()
     reported_question_ids = [nr.question.pk for nr in NegativeReport.objects.filter(user__user__username=curr_username)]
-    final_cut = [q for q in questions_feed if all([ci in q.clothing_items.all() for ci in items_lst]) and not q.pk in reported_question_ids]
-    return render(request, 'dresscodeapp/filteredresults.html', {'questions': final_cut})
+    questions_feed = [q for q in questions_feed if
+                 all([ci in q.clothing_items.all() for ci in items_lst]) and not q.pk in reported_question_ids]
+
+    # sort the questions by rate
+    questions_rate = {}
+    for question in questions_feed:
+        questions_rate[question] = get_question_score(question.pk)
+
+    sorted_questions = [entry[0] for entry in (sorted(questions_rate.items(), key=operator.itemgetter(1), reverse=True)[:NUM_TOP_LOOKS])]
+    return render(request, 'dresscodeapp/filteredresults.html', {'questions': sorted_questions})
 
 
 @login_required(login_url='/home/')
@@ -138,7 +147,7 @@ def question_page(request, q_pk):
 @login_required(login_url='/home/')
 def post_answer(request):
     curr_username = request.user.username
-    spam_threshold = datetime.now() - timedelta(seconds=2*SPAM_SECONDS_GAP)
+    spam_threshold = datetime.now() - timedelta(seconds=2 * SPAM_SECONDS_GAP)
     recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold,
                                                       user__user__username=curr_username)
     answerer = Fuser.objects.get(user__username=curr_username)
@@ -219,7 +228,10 @@ def get_questions_feed(request):
         user__user__username=curr_username) if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids and not q.pk in reported_question_ids][:10]
 
     fuser = Fuser.objects.get(user__username=curr_username)
-    return render(request, 'dresscodeapp/feed.html', {'questions': sorted(questions_feed, key=lambda q: ((q.due_date-timezone.now()).seconds/60)-q.user.score), 'userscore': fuser.score})
+    return render(request, 'dresscodeapp/feed.html', {
+        'questions': sorted(questions_feed, key=lambda q: ((q.due_date - timezone.now()).seconds / 60) - q.user.score),
+        'userscore': fuser.score})
+
 
 @login_required(login_url='/home/')
 def get_initial_feed(request):
@@ -291,7 +303,7 @@ def post_question(request):
 
     user = Fuser.objects.get(user__username=request.user.username)
     user.score -= USER_SCORE_FOR_NEW_QUESTION
-    user.num_questions+=1;
+    user.num_questions += 1;
     user.save()
     return HttpResponse(json.dumps({'success': True, 'qpk': question.pk}))
 
@@ -304,11 +316,12 @@ def get_results(request):
 
     return render(request, 'dresscodeapp/results.html', {'questions': questions_feed})
 
+
 @login_required(login_url='/home/')
 def get_profile(request):
     curr_username = request.user.username
     fuser = Fuser.objects.get(user__username=curr_username)
-    return render(request, 'dresscodeapp/userprofile.html',{'curruser':fuser})
+    return render(request, 'dresscodeapp/userprofile.html', {'curruser': fuser})
 
 
 @login_required(login_url='/home/')
@@ -443,6 +456,16 @@ def get_answers_rate(answers):
     answers_partial_fit = Answer.objects.filter(pk__in=answers, vote='0')
 
     return len(answers_fit), len(answers_no_fit), len(answers_partial_fit)
+
+
+def get_question_score(qid):
+    answers = Answer.objects.filter(question_id=qid).exclude(user__spammer=True)
+    total = float(len(answers))
+    if total == 0:
+        return 0
+
+    fit, p_fit, n_fit = get_answers_rate(answers)
+    return (fit + 0.5 * p_fit) / total
 
 
 def get_similar_users(users, curr_username):
