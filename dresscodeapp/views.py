@@ -172,25 +172,16 @@ def post_answer(request):
     answer = Answer(vote=vote, question_id=question_pk, user=answerer)
     answer.save()
     answerer.save()
-    find_spammer_by_answer(question_pk, answerer.id, vote)
+    find_spammer_by_answer(question_pk, curr_username, vote)
     return HttpResponse('success')
 
 
 def find_spammer_by_answer(question_id, answerer_name, vote):
-    question = Question.objects.filter(pk=question_id)[0]
     spammers = Fuser.objects.filter(spammer=True)
     answers_without_spammers = Answer.objects.filter(question_id=question_id).exclude(user__in=spammers)
-    num_answers_items_not_as_pic = len(Answer.objects.filter(pk__in=answers_without_spammers).exclude(items_not_as_pic=False))
+
     num_answers_items = len(answers_without_spammers)
     if num_answers_items >= MIN_ANSWERS_TO_DETERMINE_SPAMMER:
-        if num_answers_items / 2 + 1 < num_answers_items_not_as_pic:  # half the answerers think that question clothing items not as in pic
-            # asker is spammer!
-            update_spammer_credit(question.user.id)
-            question.items_not_as_pic = True
-        elif not question.items_not_as_pic:
-            question.items_not_as_pic = False
-        question.save()
-
         fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='1'))
         no_fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='2'))
         partial_fit_votes = num_answers_items - fit_vote - no_fit_vote
@@ -508,6 +499,9 @@ def negative_report(request):
             # the asker is probably a spammer - ban him!
             q.user.last_ban_timestamp = timezone.now()
             q.user.save()
+            update_spammer_credit(q.user.user.username)
+            q.items_not_as_pic = True
+            q.save()
         # approve report
         return HttpResponse('true')
     else:
