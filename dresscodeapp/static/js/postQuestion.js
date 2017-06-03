@@ -63,8 +63,7 @@ function postQuestion(){
       				// Error
       				alert(result.error_text);
   				} else {
-              		alert("Your question was posted successfully!\nLet's answer other users questions!")
-              		window.location.replace("/questionsfeed/");
+              		window.location.replace("/question-result/" + result.qpk +"/");
       			}
   			}
 		});

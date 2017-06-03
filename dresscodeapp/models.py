@@ -50,6 +50,9 @@ class Question(models.Model):
 	def __str__(self):
 		return '{0}: {1}'.format(self.pk, self.title)
 
+	class Meta:
+		ordering = ["-due_date", "-user__score"]
+
 
 class Answer(models.Model):
 	"""

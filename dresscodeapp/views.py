@@ -11,7 +11,7 @@ from models import *
 from datetime import datetime, timedelta
 
 SPAM_SECONDS_GAP = 10
-SPAM_ANSWERS_GAP = 8
+SPAM_ANSWERS_GAP = 2
 USER_SCORE_FOR_NEW_ANSWER = 1
 USER_SCORE_FOR_NEW_QUESTION = 7
 MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
@@ -38,9 +38,17 @@ def login_user(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
-                if Fuser.objects.get(user__username=user.username).last_ban_timestamp+timedelta(hours=24) > timezone.now():
-                    # logged in user is a spammer!
-                    return HttpResponseRedirect('/home/')
+                fuser = Fuser.objects.get(user__username=user.username)
+                tomorrow = fuser.last_ban_timestamp + timedelta(hours=24)
+                now = timezone.now()
+                if tomorrow > now:
+                    hours = (tomorrow - now).seconds / 3600
+                    res = '{0}'
+                    if hours == 0:
+                        res = res.format('in a few minutes')
+                    else:
+                        res = res.format('{0} hours'.format(hours))
+                    return render(request, 'dresscodeapp/base.html', {'fuser': fuser, 'diff': res})
                 login(request, user)
                 if next_page != '':
                     return HttpResponseRedirect(next_page)
@@ -129,16 +137,25 @@ def question_page(request, q_pk):
 
 @login_required(login_url='/home/')
 def post_answer(request):
-    # check for spam: if user answered 10 questions in the past 10 seconds - kick his ass
     curr_username = request.user.username
-    spam_threshold = datetime.now() - timedelta(seconds=SPAM_SECONDS_GAP)
+    spam_threshold = datetime.now() - timedelta(seconds=2*SPAM_SECONDS_GAP)
     recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold,
                                                       user__user__username=curr_username)
     answerer = Fuser.objects.get(user__username=curr_username)
     if len(recently_answered_by_user) > SPAM_ANSWERS_GAP:
         # handle as spam (warning / log user out / kill user)
         answerer.last_ban_timestamp = timezone.now()
-        return HttpResponseRedirect('/logout-user/')
+        answerer.save()
+        logout(request)
+        tomorrow = answerer.last_ban_timestamp + timedelta(hours=24)
+        now = timezone.now()
+        if tomorrow > now:
+            hours = (tomorrow - now).seconds / 3600
+            if hours == 0:
+                res = 'in a few minutes'
+            else:
+                res = '{0} hours'.format(hours)
+            return HttpResponse('spam#{0}'.format(answerer.user.username))
     answerer.num_answers += 1
     answerer.score += USER_SCORE_FOR_NEW_ANSWER
     vote = request.POST['vote']
@@ -199,10 +216,10 @@ def get_questions_feed(request):
     # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
     reported_question_ids = [nr.question.pk for nr in NegativeReport.objects.filter(user__user__username=curr_username)]
     questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(
-        user__user__username=curr_username).order_by(
-        'due_date') if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids and not q.pk in reported_question_ids][:5]
-    fuser = Fuser.objects.filter(user__username=curr_username)
-    return render(request, 'dresscodeapp/feed.html', {'questions': questions_feed, 'userscore': fuser[0].score})
+        user__user__username=curr_username) if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids and not q.pk in reported_question_ids][:10]
+
+    fuser = Fuser.objects.get(user__username=curr_username)
+    return render(request, 'dresscodeapp/feed.html', {'questions': sorted(questions_feed, key=lambda q: ((q.due_date-timezone.now()).seconds/60)-q.user.score), 'userscore': fuser.score})
 
 @login_required(login_url='/home/')
 def get_initial_feed(request):
@@ -276,7 +293,7 @@ def post_question(request):
     user.score -= USER_SCORE_FOR_NEW_QUESTION
     user.num_questions+=1;
     user.save()
-    return HttpResponse(json.dumps({'success': True}))
+    return HttpResponse(json.dumps({'success': True, 'qpk': question.pk}))
 
 
 @login_required(login_url='/home/')

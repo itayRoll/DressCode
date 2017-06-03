@@ -61,12 +61,13 @@ function postAnswer(questionId, vote, numOfQuestions, userScore) {
                         csrfmiddlewaretoken: CSRF_TOKEN,
                     },
                 success: function(response) {
-                    result = JSON.parse(response);  // Get the results sended from ajax to here
-                    if (result.error) {
-                        // Error
-                        alert(result.error_text);
-                    } else {
-                        // Success
+                    var s = response
+                    if (s.startsWith("spam")){
+                        username = s.split("#")[1]
+                        // alert spammer before ban
+                        var modal = document.getElementById('modal-spam');
+                        modal.style.display='block'
+                        modal.innerHTML = modal.innerHTML.replace("username", username)
                     }
                 }
             });

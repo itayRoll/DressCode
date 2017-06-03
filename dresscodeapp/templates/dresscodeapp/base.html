@@ -139,10 +139,10 @@ and is wrapped around the whole page content, except for the footer in this exam
 
   <!-- Header -->
   <header class="w3-container w3-center w3-padding-48 w3-white">
-    <!-- <a href="index.html"> -->
+    <div><a href="home" style="text-decoration:none">
       <h1 class="w3-xxxlarge"><b>DressCode</b></h1>
-      <h6>let the crowd help you <span class="w3-tag">look better</span></h6>
-    <!-- </a> -->
+      <h6>let the crowd help you <span class="w3-tag">look better</span></h6></a>
+    </div>
   </header>
 
   <!-- Image header -->
@@ -160,37 +160,34 @@ and is wrapped around the whole page content, except for the footer in this exam
 <body>
 
 <div id="id01" class="modal">
-  <form class="modal-content animate" action="{%  url 'login_user' %}" method="post">
-  {% csrf_token %}
-    <div class="imgcontainer">
-      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-    </div>
+    <form class="modal-content animate" action="{%  url 'login_user' %}" method="post">
+      {% csrf_token %}
+        <div class="imgcontainer">
+          <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close">&times;</span>
+        </div>
 
-    <div class="container">
-      <!-- <label><b>Username</b></label> -->
-      <input type="text" placeholder="Enter Username" name="uname" required>
-
-      <!-- <label><b>Password</b></label> -->
-      <input type="password" placeholder="Enter Password" name="psw" required>
-      <button  class="btn" style="background-color: #000000;
-                      color: white;
-                      padding: 14px 20px;
-                      margin: 8px 0;
-                      border: none;
-                      cursor: pointer;
-                      width: 30%;
-                      margin-left: 30%;
-                      margin-right: 6%;
-                      text-align: center;"
-              type="submit"><b>Login</b></button>
-      <input type="checkbox" checked="checked"> Remember me
-      <input type="hidden" name="next" value="{{ request.GET.next }}" />
-    </div>
-
-    <!-- <div class="container" style="background-color:#f1f1f1"> -->
-      <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
-    <!-- </div> -->
-  </form>
+        <div class="container">
+          {% if fuser %}
+            <h3 style="color: 910502;"> Dear {{ fuser.user.username }}, <br> Your activity seems a bit fishy. <br> We're looking into it. <br> Please try to login again in about {{ diff }}. <br><br> Yours truly, the DressCode team </h3>
+          {% else %}
+            <input type="text" placeholder="Enter Username" name="uname" required>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+            <button  class="btn" style="background-color: #000000;
+                            color: white;
+                            padding: 14px 20px;
+                            margin: 8px 0;
+                            border: none;
+                            cursor: pointer;
+                            width: 30%;
+                            margin-left: 30%;
+                            margin-right: 6%;
+                            text-align: center;"
+                    type="submit"><b>Login</b></button>
+            <input type="checkbox" checked="checked"> Remember me
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
+          {% endif %}
+        </div>
+      </form>
 </div>
 
 <div id="id02" class="modal">
@@ -198,7 +195,7 @@ and is wrapped around the whole page content, except for the footer in this exam
   <form class="modal-content animate" action="{%  url 'signup_user' %}" method="post">
   {% csrf_token %}
     <div class="imgcontainer">
-      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close">&times;</span>
     </div>
 
     <div class="container">
@@ -254,7 +251,7 @@ window.onclick = function(event) {
 
 <footer>
 <br>
-<a href="#" class="fa fa-facebook" style="margin-left: 20px;"></a>
+    <a href="#" class="fa fa-facebook" style="margin-left: 20px;"></a>
     <a href="#" class="fa fa-twitter" style="margin-left: 20px;"></a>
     <a href="#" class="fa fa-linkedin" style="margin-left: 20px;"></a>
   <br><br>

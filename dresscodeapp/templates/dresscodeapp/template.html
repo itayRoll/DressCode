@@ -74,10 +74,38 @@ and is wrapped around the whole page content, except for the footer in this exam
 
 <div id="main" class="content container">
     <div class="row col-md-8">
-    <br>
+        <div id="modal-spam" class="modal">
+            <form class="modal-content animate" action="{%  url 'login_user' %}" method="post">
+              {% csrf_token %}
+                <div class="imgcontainer">
+                  <span onclick="document.getElementById('modal-spam').style.display='none'" class="close" title="Close">&times;</span>
+                </div>
+
+                <div class="container">
+                    <h3 style="color: 910502;"> Hi username, <br> The DressCode community is all about trust and sharing.<br>
+                                                However, your activity has raised some eyebrows, so we need to check it before we let you continue voicing your opinions.<br>
+                                                If all goes right, you will be able to login to our servers in no-time. <br><br> Yours truly, the DressCode team </h3>
+                </div>
+              </form>
+        </div>
+        <br>
         {% block content %}
         {% endblock %}
-    <br>
+        <br>
     </div>
 </div>
+
+<script>
+// Get the modal
+var modalSpam = document.getElementById('modal-spam');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modalSpam) {
+        modalSpam.style.display = "none";
+    }
+}
+</script>
+
+
 </body>
