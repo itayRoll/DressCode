@@ -17,8 +17,8 @@
 			  <button id=report{{question.pk}} class="btn btn-primary-outline dropdown-toggle" type="button" data-toggle="dropdown" style="background-color: transparent;">
 			  <span class="glyphicon glyphicon-chevron-down"></span></button>
 			  <ul class="dropdown-menu pull-right" style="float:right;">
-			    <li><a id="match{{question.pk}}" href="javascript: void(0)" onclick="sendNegativeReport({{question.pk}})">Clothing items don't match the photo</a></li>
-			    <li><a id="offensive{{question.pk}}" href="javascript: void(0)" onclick="sendNegativeReport({{question.pk}})">Report photo as offensive</a></li>
+			    <li><a id="match{{question.pk}}" href="javascript: void(0)" onclick="sendNegativeReport({{question.pk}}, {{ questions|length }})">Clothing items don't match the photo</a></li>
+			    <li><a id="offensive{{question.pk}}" href="javascript: void(0)" onclick="sendNegativeReport({{question.pk}}, {{ questions|length }})">Report photo as offensive</a></li>
 			  </ul>
 			</div>
 			<div class="cf" align="middle">
