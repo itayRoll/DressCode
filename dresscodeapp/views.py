@@ -293,6 +293,7 @@ def post_question(request):
     user.score -= USER_SCORE_FOR_NEW_QUESTION
     user.num_questions+=1;
     user.save()
+    print question.pk
     return HttpResponse(json.dumps({'success': True, 'qpk': question.pk}))
 
 

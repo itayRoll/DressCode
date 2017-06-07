@@ -2,18 +2,13 @@ function postQuestion(){
     var e = document.getElementById("title")
     var title =  e.options[e.selectedIndex].value;
     if (!validateTitle(title)) {
-        return
+        return false;  
     }
     var description =  document.getElementById("comment").value;
 
     var date=$("#date").val();
     if (!validateDate(date)) {
-        return
-    }
-
-    var photo = document.getElementById("pic").files[0];
-    if (!validateFile(photo)) {
-        return
+        return false;
     }
 
     var items_lst = ""
@@ -39,7 +34,12 @@ function postQuestion(){
     }
 
     if (!validateItems(items_lst)) {
-        return
+        return false;
+    }
+
+    var photo = document.getElementById("pic").files[0];
+    if (!validateFile(photo)) {
+        return false;
     }
 
     var data = new FormData();
@@ -67,12 +67,13 @@ function postQuestion(){
       			}
   			}
 		});
+    //alert("waiting...");
 }
 
 var numOfItems = 0
 function addClothingItemRow() {
     numOfItems = numOfItems+1
-    $('#items').find('tbody').append('<tr><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Item</option><option value="1">T-Shirt</option><option value="2">Shirt</option><option value="6">Hoodie</option><option value="10">Suit</option><option value="3">Short Pants</option><option value="13">Jeans</option><option value="11">Pants</option><option value="7">Dress</option><option value="12">Skirt</option><option value="5">Shoes</option><option value="9">Swim Suit</option><option value="4">Hat</option></select></td><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Color</option><option value="1">Blue</option><option value="2">Red</option><option value="3">Black</option><option value="4">White</option><option value="5">Purple</option><option value="6">Green</option><option value="7">Yellow</option><option value="8">Brown</option><option value="9">Grey</option></select></td><td class="col-md-2"><select class="form-control"><option value="" selected disabled>Pattern</option><option value="1">None</option><option value="2">Stripes</option><option value="3">Dots</option><option value="4">Checked</option></select></td><td class="col-md-2"><button class="btn btn" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button> <button class="btn btn" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button></td></tr>');
+    $('#items').find('tbody').append('<tr><td class="col-md-2"><select class="form-control" required><option value="" selected disabled>Item</option><option value="1">T-Shirt</option><option value="2">Shirt</option><option value="6">Hoodie</option><option value="10">Suit</option><option value="3">Short Pants</option><option value="13">Jeans</option><option value="11">Pants</option><option value="7">Dress</option><option value="12">Skirt</option><option value="5">Shoes</option><option value="9">Swim Suit</option><option value="4">Hat</option></select></td><td class="col-md-2"><select class="form-control" required><option value="" selected disabled>Color</option><option value="1">Blue</option><option value="2">Red</option><option value="3">Black</option><option value="4">White</option><option value="5">Purple</option><option value="6">Green</option><option value="7">Yellow</option><option value="8">Brown</option><option value="9">Grey</option></select></td><td class="col-md-2"><select class="form-control" required><option value="" selected disabled>Pattern</option><option value="1">None</option><option value="2">Stripes</option><option value="3">Dots</option><option value="4">Checked</option></select></td><td class="col-md-2"><button class="btn btn" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button> <button class="btn btn" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button></td></tr>');
 }
 
 function removeClothingItemRow(e){
@@ -84,7 +85,7 @@ function removeClothingItemRow(e){
 
 function validateTitle(title) {
     if (title=="") {
-        alert("Please select event from list")
+        //alert("Please select event from list")
         return false
     }
     return true
@@ -92,7 +93,7 @@ function validateTitle(title) {
 
 function validateDate(date) {
     if (date=="") {
-        alert("Please select due date for your question")
+        //alert("Please select due date for your question")
         return false
     }
     var parts = date.split('/');
@@ -109,7 +110,6 @@ function validateDate(date) {
 
 function validateFile(file) {
     if (typeof file == 'undefined' ) {
-        alert("Please upload a photo of your look")
         return false;
     }
     var valid = false
@@ -131,27 +131,28 @@ function validateFile(file) {
 
 function validateItems(items_lst) {
     if (items_lst == "") {
-        alert("Please specify the clothing items of your look")
-        return false
+        return false;
     }
     var lines = items_lst.split("#");
     for (var j = 0; j < lines.length; j++) {
         if (lines[j] == "") {
-            continue
+            //alert("Please fill clothing item " + (j+1) + " or remove it.");
+            return false;
+            // continue;
         }
-        var sub_items = lines[j].split(",")
+        var sub_items = lines[j].split(",");
         if (sub_items[0] == "") {
-            alert("Please specify clothing items in row " + (j+1))
-            return false
+            //alert("Please specify clothing items in row " + (j+1))
+            return false;
         }
         if (sub_items[1] == "") {
-            alert("Please specify color fot item " + sub_items[0])
-            return false
+            //alert("Please specify color fot item " + sub_items[0])
+            return false;
         }
 
         if (sub_items[2] == "") {
-            alert("Please specify pattern fot item " + sub_items[0])
-            return false
+            //alert("Please specify pattern fot item " + sub_items[0])
+            return false;
         }
 
     }

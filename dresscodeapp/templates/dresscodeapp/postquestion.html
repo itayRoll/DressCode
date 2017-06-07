@@ -22,12 +22,13 @@
    <div class="panel panel-default">
       <div class="panel-body">
 		  {% if score >= 10 %}
+		  <form name="postqform" onsubmit="return postQuestion()" method="post">
          <div class="row">
 	         <div class='col-md-6'>
 	               <div class="form-group">
 	                  <label class="control-label">Due Date</label>
 	                  <div class="input-group date" data-provide="datepicker">
-						<input class="form-control" id="date" name="date"  data-format="MM/DD/YYY" placeholder="MM/DD/YYY" type="text"/>
+						<input class="form-control" id="date" name="date" data-format="MM/DD/YYY" placeholder="MM/DD/YYY" type="text" required/>
 						<div class="input-group-addon">
 							<span class="glyphicon glyphicon-th"></span>
 						</div>
@@ -37,7 +38,7 @@
             <div class="col-md-6">
                <div class="form-group">
                   <label class="control-label">Title</label>
-                  <select id="title" class="form-control">
+                  <select id="title" class="form-control" required>
 							<option value="" selected disabled>Event</option>
 							<option>First date</option>
 							<option>Holiday dinner</option>
@@ -54,7 +55,7 @@
             <div class="col-md-12">
                <div class="form-group">
 				  <label for="comment">Description</label>
-				  <textarea class="form-control" rows="5" id="comment"></textarea>
+				  <textarea class="form-control" rows="5" id="comment" required></textarea>
 				</div>
             </div>
          </div>
@@ -62,7 +63,7 @@
 			 <table id="items">
 				 <tr>
 					<td class='col-md-2'>
-						<select class="form-control">
+						<select class="form-control" required>
 							<option value="" selected disabled>Item</option>
 							<option value="1">T-Shirt</option>
 							<option value="2">Shirt</option>
@@ -79,7 +80,7 @@
 						  </select>
 						</td>
 						<td class='col-md-2'>
-							<select class="form-control">
+							<select class="form-control" required>
 								<option value="" selected disabled>Color</option>
 								<option value="1">Blue</option>
 								<option value="2">Red</option>
@@ -93,7 +94,7 @@
 							  </select>
 						</td>
 						<td class='col-md-2'>
-							<select class="form-control">
+							<select class="form-control" required>
 								<option value="" selected disabled>Pattern</option>
 								<option value="1">None</option>
 								<option value="2">Stripes</option>
@@ -103,7 +104,6 @@
 						</td>
 						<td class='col-md-2'>
 							<button class="btn btn" type="button" onclick="addClothingItemRow()"><span class="glyphicon glyphicon-plus"></span></button>
- 
 							<button class="btn btn" type="button" onclick="removeClothingItemRow(this)"><span class="glyphicon glyphicon-minus"></span></button>
 						</td>
 				 </tr>
@@ -111,11 +111,12 @@
 			 </div>
 <div><br></div>
 		  <br>
-         <input type="file" id="pic" name="pic" accept="image/*">
+         <input type="file" id="pic" name="pic" accept="image/*" required>
          <div><br></div>
          <div style="text-align:center"> 
-         <input type="submit" class="my-btn" value="Submit" onclick="postQuestion()" >
+         <input type="submit" class="my-btn" value="Submit">
          </div>
+         </form>
 		  {%else%}
 		  <div>
 			  <p>you don't have enough credit! Answer some other people's questions and come by later :)</p>
