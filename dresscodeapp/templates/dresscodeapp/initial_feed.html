@@ -69,7 +69,8 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 
 .mycss7
 {
-font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:25px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;margin-top:-50px;
+
 }
 
 
@@ -85,7 +86,7 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:25p
                  background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg">
                 <p class="mycss7">
                     Before you ask your own questions and help other users get their perfect looks,
-                    <br>
+                    
                     we wish to get to know you better!
                     <br>
                     Please answer the following questions:
@@ -93,9 +94,9 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:25p
             </div>
         </td>
     </tr>
-    <tr>
+    <tr >
         <td>
-            <table class="center" id="questions_table"
+            <table class="center" id="questions_table" 
                    background="http://www.solidbackgrounds.com/images/2560x1440/2560x1440-white-solid-color-background.jpg">
                 {% for question in questions%}
                 <tr>
@@ -119,8 +120,7 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:25p
                                     {% if question.clothing_items%}
                                         <p class="mycss4"> Clothing items:</p>
                                     {% for clothing_item in question.clothing_items.all %}
-                                        <p class="mycss3">{{ clothing_item.get_type_display }}- Color: {{
-                                        clothing_item.get_color_display }}, Pattern: {{ clothing_item.get_pattern_display}}</p>
+                                        <p class="mycss3">{{ clothing_item.get_type_display }}- Color: {{clothing_item.get_color_display }}, Pattern: {{ clothing_item.get_pattern_display}}</p>
                                     {% endfor %}
                                     {%endif%}
                                 </p>
@@ -153,10 +153,12 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:25p
     </tr>
 </table>
 <div id="divreload" class="cf" valign="bottom" style="width:100%" hidden="true">
-    <p class="mycss5" style="position: relative; align:middle">Thank you! Now we know you better!</p>
-    <button id="reload" type="button" class="my-btn" onclick="feed()" style="position: relative; left: 50%;">
+<div style="text-align:center; margin-left:55%;">
+    <p class="mycss5" >Thank you! <br> Now we know you better!</p>
+    <button id="reload" type="button" class="my-btn" onclick="feed()" >
         <b>Go to my news feed</b>
     </button>
+    </div>
 </div>
 {%endif%}
 {% endblock %}
