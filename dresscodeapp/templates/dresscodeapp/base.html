@@ -188,8 +188,13 @@ and is wrapped around the whole page content, except for the footer in this exam
           <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close">&times;</span>
         </div>
         <div class="container">
-            <input type="text" placeholder="Enter Username" name="uname" required>
-            <input type="password" placeholder="Enter Password" name="psw" required>
+            {% if err_msg %}
+                <input type="text" placeholder="Enter Username" name="uname" required value="{{ username }}">
+                <input type="password" placeholder="Wrong Password" name="psw" required style="border-color: red">
+            {% else %}
+                <input type="text" placeholder="Enter Username" name="uname" required>
+                <input type="password" placeholder="Enter Password" name="psw" required>
+            {% endif %}
             <button  class="btn" style="background-color: #000000;
                             color: white;
                             padding: 14px 20px;
@@ -217,25 +222,47 @@ and is wrapped around the whole page content, except for the footer in this exam
 
     <div class="container">
       <!-- <label><b>Username</b></label> -->
-      <input type="text" placeholder="Username" name="uname" required>
-      <input id="password" type="password" placeholder="Password" name="psw" required onkeyup="checkPasswordMatch()">
-      <input id="confirm_password" type="password" placeholder="Confirm Password" name="confirm-psw" required onkeyup="checkPasswordMatch()">
-      <input type="text" placeholder="Email" name="email" required>
-      <div class="form-group">
-        <select style="width:90%; margin-top: 16px; margin-bottom: 26px;" class="form-control" id="sel1" name="gender" required>
-          <option value="">GENDER</option>
-          <option value="m">MALE</option>
-          <option value="f">FEMALE</option>
-        </select>
-      </div>
-      <div class="form-group">
-      <div class="input-group date" data-provide="datepicker">
-            <input style="margin-top:1px;" class="form-control" id="date" name="dob"  data-format="MM/DD/YYY" placeholder="MM/DD/YYY" required type="text"/>
-            <div class="input-group-addon">
-              <span class="glyphicon glyphicon-th"></span>
-            </div>
+      {% if signup_err_msg %}
+          <input type="text" placeholder="{{ signup_err_msg }}" name="uname" required style="border-color: red">
+          <input id="password" type="password" placeholder="Password" name="psw" required onkeyup="checkPasswordMatch()">
+          <input id="confirm_password" type="password" placeholder="Confirm Password" name="confirm-psw" required onkeyup="checkPasswordMatch()">
+          <input type="text" placeholder="Email" name="email" required value="{{ email }}">
+          <div class="form-group">
+            <select style="width:90%; margin-top: 16px; margin-bottom: 26px;" class="form-control" id="sel1" name="gender" required value="{{ gender }}">
+              <option value="">GENDER</option>
+              <option value="m">MALE</option>
+              <option value="f">FEMALE</option>
+            </select>
           </div>
-      </div>
+          <div class="form-group">
+              <div class="input-group date" data-provide="datepicker">
+                <input style="margin-top:1px;" class="form-control" id="date" name="dob"  data-format="MM/DD/YYY" placeholder="MM/DD/YYY" value="{{ dob }}" required type="text"/>
+                <div class="input-group-addon">
+                  <span class="glyphicon glyphicon-th"></span>
+                </div>
+              </div>
+          </div>
+      {% else %}
+          <input type="text" placeholder="Username" name="uname" required>
+          <input id="password" type="password" placeholder="Password" name="psw" required onkeyup="checkPasswordMatch()">
+          <input id="confirm_password" type="password" placeholder="Confirm Password" name="confirm-psw" required onkeyup="checkPasswordMatch()">
+          <input type="text" placeholder="Email" name="email" required>
+          <div class="form-group">
+            <select style="width:90%; margin-top: 16px; margin-bottom: 26px;" class="form-control" id="sel1" name="gender" required>
+              <option value="">GENDER</option>
+              <option value="m">MALE</option>
+              <option value="f">FEMALE</option>
+            </select>
+          </div>
+          <div class="form-group">
+              <div class="input-group date" data-provide="datepicker">
+                <input style="margin-top:1px;" class="form-control" id="date" name="dob"  data-format="MM/DD/YYY" placeholder="MM/DD/YYY" required type="text"/>
+                <div class="input-group-addon">
+                  <span class="glyphicon glyphicon-th"></span>
+                </div>
+              </div>
+          </div>
+      {% endif %}
       <button id="signUpBtn" class="btn" style="background-color: #000000;
                       color: white;
                       padding: 14px 20px;
@@ -250,6 +277,30 @@ and is wrapped around the whole page content, except for the footer in this exam
     </div>
   </form>
 </div>
+
+{% if fuser %}
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      document.getElementById('fishy').style.display='block';
+    });
+  </script>
+{% endif %}
+
+{% if err_msg %}
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      document.getElementById('id01').style.display='block';
+    });
+  </script>
+{% endif %}
+
+{% if signup_err_msg %}
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      document.getElementById('id02').style.display='block';
+    });
+  </script>
+{% endif %}
 
 <script>
 // Get the modal
@@ -269,7 +320,7 @@ window.onclick = function(event) {
 </body>
 
 <footer>
-  <br><br>
+  <br><br><br>
 </footer>
 
 </html>

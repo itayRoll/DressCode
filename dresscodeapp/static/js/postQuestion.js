@@ -61,12 +61,13 @@ function postQuestion(){
   				result = JSON.parse(response);  // Get the results sended from ajax to here
   				if (result.error) {
       				// Error
-      				alert(result.error_text);
+      				console.log(result.error_text);
   				} else {
               		window.location.replace("/question-result/" + result.qpk +"/");
       			}
   			}
 		});
+    return false;
 }
 
 var numOfItems = 0

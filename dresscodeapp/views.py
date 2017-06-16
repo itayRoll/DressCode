@@ -55,6 +55,8 @@ def login_user(request):
                 if next_page != '':
                     return HttpResponseRedirect(next_page)
                 return HttpResponseRedirect('/questionsfeed/')
+        else:
+            return render(request, 'dresscodeapp/base.html', {'err_msg': 'Wrong Password', 'username': username})
     return render(request, 'dresscodeapp/base.html')
 
 
@@ -76,6 +78,7 @@ def signup_user(request):
         try:
             # user is already in the system
             user = User.objects.get(username=username)
+            return render(request, 'dresscodeapp/base.html', {'signup_err_msg': 'Username already exists', 'email': email, 'dob': dob})
         except:
             user = User.objects.create_user(username=username, email=email, password=password)
             fuser = Fuser(user=user, gender=gender, dob=datetime.strptime(dob, "%m/%d/%Y").date())
@@ -299,7 +302,6 @@ def post_question(request):
     user.score -= USER_SCORE_FOR_NEW_QUESTION
     user.num_questions += 1;
     user.save()
-    print question.pk
     return HttpResponse(json.dumps({'success': True, 'qpk': question.pk}))
 
 
