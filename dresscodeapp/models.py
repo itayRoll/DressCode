@@ -98,6 +98,9 @@ class ClothingItem(models.Model):
 		('11', 'PANTS'),
 		('12', 'SKIRT'),
 		('13', 'JEANS'),
+		('14', 'TIE'),
+		('15', 'SCARF'),
+		('16', 'JACKET'),
 	)
 
 	PATTERN = (

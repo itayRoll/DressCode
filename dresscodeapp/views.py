@@ -12,7 +12,7 @@ from models import *
 from datetime import datetime, timedelta
 
 SPAM_SECONDS_GAP = 10
-SPAM_ANSWERS_GAP = 2
+SPAM_ANSWERS_GAP = 8
 USER_SCORE_FOR_NEW_ANSWER = 1
 USER_SCORE_FOR_NEW_QUESTION = 7
 MIN_ANSWERS_TO_DETERMINE_SPAMMER = 3
@@ -147,7 +147,7 @@ def question_page(request, q_pk):
 @login_required(login_url='/home/')
 def post_answer(request):
     curr_username = request.user.username
-    spam_threshold = datetime.now() - timedelta(seconds=2 * SPAM_SECONDS_GAP)
+    spam_threshold = datetime.now() - timedelta(seconds= SPAM_SECONDS_GAP)
     recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold,
                                                       user__user__username=curr_username)
     answerer = Fuser.objects.get(user__username=curr_username)
