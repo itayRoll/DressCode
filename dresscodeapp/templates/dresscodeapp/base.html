@@ -9,8 +9,8 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <!-- <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> -->
+    <!-- <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     <script src="{% static 'js/main.js' %}"></script>
@@ -139,10 +139,9 @@ and is wrapped around the whole page content, except for the footer in this exam
 
   <!-- Header -->
   <header class="w3-container w3-center w3-padding-48 w3-white">
-    <div><a href="home" style="text-decoration:none">
+    <a href="/home" style="text-decoration:none">
       <h1 class="w3-xxxlarge"><b>DressCode</b></h1>
       <h6>let the crowd help you <span class="w3-tag">look better</span></h6></a>
-    </div>
   </header>
 
   <!-- Image header -->
@@ -152,24 +151,43 @@ and is wrapped around the whole page content, except for the footer in this exam
       <h1 class="w3-text-white">START</h1>
       <h1 class="w3-jumbo w3-text-white w3-hide-small"><b>COLLABORATING</b></h1>
       <h6><button style="width:24%;" class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('id02').style.display='block'">SIGN UP</button></h6>
-      <h6><button style="width:24%;" class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('id01').style.display='block'">LOG IN</button></h6>
+      {% if fuser %}
+        <h6><button style="width:24%;" class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('fishy').style.display='block'">LOG IN</button></h6>
+      {% else %}
+        <h6><button style="width:24%;" class="w3-button w3-white w3-padding-large w3-large w3-opacity w3-hover-opacity-off" onclick="document.getElementById('id01').style.display='block'">LOG IN</button></h6>
+      {% endif %}
     </div>
   </header>
     
 </head>
 <body>
 
-<div id="id01" class="modal">
+{% if fuser %}
+<div id="fishy" class="modal">
+    <form class="modal-content animate">
+      {% csrf_token %}
+        <div class="imgcontainer">
+          <span onclick="document.getElementById('fishy').style.display='none'" class="close" title="Close">&times;</span>
+        </div>
+        <div class="container">
+            <h3 style="color: 910502;"> Dear {{ fuser.user.username }}, <br> Your activity seems a bit fishy. <br> We're looking into it. <br> Please try to login again in about {{ diff }}. <br><br> Yours truly, the DressCode team </h3>
+            <div class="switch-accounts">
+              <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-target="#id01" onclick="$('#fishy').hide(); document.getElementById('id01').style.display='block'"> Different account?</button>
+              </div>
+            </div>
+        </div>
+      </form>
+</div>
+{% endif %}
+
+<div id="id01" class="modal" data-backdrop="static">
     <form class="modal-content animate" action="{%  url 'login_user' %}" method="post">
       {% csrf_token %}
         <div class="imgcontainer">
           <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close">&times;</span>
         </div>
-
         <div class="container">
-          {% if fuser %}
-            <h3 style="color: 910502;"> Dear {{ fuser.user.username }}, <br> Your activity seems a bit fishy. <br> We're looking into it. <br> Please try to login again in about {{ diff }}. <br><br> Yours truly, the DressCode team </h3>
-          {% else %}
             <input type="text" placeholder="Enter Username" name="uname" required>
             <input type="password" placeholder="Enter Password" name="psw" required>
             <button  class="btn" style="background-color: #000000;
@@ -185,7 +203,6 @@ and is wrapped around the whole page content, except for the footer in this exam
                     type="submit"><b>Login</b></button>
             <input type="checkbox" checked="checked"> Remember me
             <input type="hidden" name="next" value="{{ request.GET.next }}" />
-          {% endif %}
         </div>
       </form>
 </div>
@@ -236,24 +253,22 @@ and is wrapped around the whole page content, except for the footer in this exam
 
 <script>
 // Get the modal
+var fishy = document.getElementById('fishy');
 var modal1 = document.getElementById('id01');
 var modal2 = document.getElementById('id02');
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-    if (event.target == modal1 || event.target == modal2) {
+    if (event.target == modal1 || event.target == modal2 || event.target == fishy) {
         modal1.style.display = "none";
         modal2.style.display = "none";
+        fishy.style.display = "none";
     }
 }
 </script>
 </body>
 
 <footer>
-<br>
-    <a href="#" class="fa fa-facebook" style="margin-left: 20px;"></a>
-    <a href="#" class="fa fa-twitter" style="margin-left: 20px;"></a>
-    <a href="#" class="fa fa-linkedin" style="margin-left: 20px;"></a>
   <br><br>
 </footer>
 
