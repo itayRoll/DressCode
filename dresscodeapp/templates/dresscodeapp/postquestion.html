@@ -22,7 +22,8 @@
    <div class="panel panel-default">
       <div class="panel-body">
 		  {% if score >= 10 %}
-		  <form name="postqform" onsubmit="return postQuestion()" method="post">
+		  <form name="postqform" onsubmit="return postQuestion()" method="post" action="/questionsfeed/">
+			  {% csrf_token %}
          <div class="row">
 	         <div class='col-md-6'>
 	               <div class="form-group">
@@ -47,6 +48,16 @@
 							<option>First day at new job</option>
 							<option>Wedding</option>
 							<option>Bar-Mitzva</option>
+					  		<option>Party</option>
+						  	<option>Ordinary day</option>
+						  	<option>Sport event</option>
+						  	<option>Going out with friends</option>
+						  	<option>Beach or Pool</option>
+						  	<option>Work event</option>
+					  		<option>Movies or theater</option>
+						  	<option>Presentation or show</option>
+					  		<option>Family meeting</option>
+						  	<option>Other</option>
 				  </select>
                </div>
             </div>
@@ -77,6 +88,9 @@
 							<option value="5">Shoes</option>
 							<option value="9">Swim Suit</option>
 							<option value="4">Hat</option>
+                            <option value="14">Tie</option>
+                            <option value="15">Scarf</option>
+                            <option value="16">Jacket</option>
 						  </select>
 						</td>
 						<td class='col-md-2'>
