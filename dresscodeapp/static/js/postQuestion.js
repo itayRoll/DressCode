@@ -67,7 +67,6 @@ function postQuestion(){
       			}
   			}
 		});
-    //alert("waiting...");
 }
 
 var numOfItems = 0

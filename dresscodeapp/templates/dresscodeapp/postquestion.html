@@ -22,7 +22,7 @@
    <div class="panel panel-default">
       <div class="panel-body">
 		  {% if score >= 10 %}
-		  <form name="postqform" onsubmit="return postQuestion()" method="post">
+		  <form name="postqform" onsubmit="return postQuestion()" method="post" action="/questionsfeed/">
 			  {% csrf_token %}
          <div class="row">
 	         <div class='col-md-6'>
