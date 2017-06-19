@@ -28,7 +28,6 @@ function postPreAnswer(questionId, vote, numOfQuestions) {
 function postAnswer(questionId, vote, numOfQuestions, userScore) {
   numOfCalls = numOfCalls+1
   if (vote >=0) {
-        // add loading animation to button
         $('#thanks'+questionId).show()
         $('#thanks'+questionId).fadeOut(5000)
         var thankyou = 'Thanks for answering!';
@@ -49,7 +48,7 @@ function postAnswer(questionId, vote, numOfQuestions, userScore) {
 	    $('#questions_table').hide()
 	    $('#gettoknowyou').hide()
 	    $('#divreload').show()
-	    $('#reload').show()
+	    setTimeout(function(){ window.location.href = '../questionsfeed/'; }, 4000);
 	}
 	if (vote >= 0) {
         $.ajax({

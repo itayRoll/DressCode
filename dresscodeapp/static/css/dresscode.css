@@ -115,3 +115,26 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
 {
 font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;left: 50%;
 }
+.mycss6
+{
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;
+}
+
+.mycss7
+{
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;margin-top:-50px;
+}
+
+.loader {
+    border: 16px solid #b6b7ba;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
