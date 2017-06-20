@@ -77,10 +77,6 @@ function reload() {
 	location.reload();
 }
 
-function feed() {
-	window.location.href = '../questionsfeed/'
-}
-
 function toggle_by_id(cls, on) {
     var lst = document.getElementById(cls);
     for(var i = 0; i < lst.length; ++i) {
