@@ -1,4 +1,5 @@
 function postQuestion(){
+    // collect form fields and validate values
     var e = document.getElementById("title")
     var title =  e.options[e.selectedIndex].value;
     if (!validateTitle(title)) {
@@ -16,7 +17,7 @@ function postQuestion(){
     var rowCount = tbl.rows.length;
     var colCount = 3;
 
-    for (var i = 0;i<rowCount;i++) {
+    for (var i = 0; i < rowCount; i++) {
         var myrow = tbl.rows[i];
         var tmp_row = "";
         for (var j=0;j<colCount;j++) {
@@ -67,6 +68,9 @@ function postQuestion(){
       			}
   			}
 		});
+
+    // eventually, we return false either way in order to let the success function above be executed
+    // instead of the form be submitted
     return false;
 }
 
@@ -85,7 +89,6 @@ function removeClothingItemRow(e){
 
 function validateTitle(title) {
     if (title=="") {
-        //alert("Please select event from list")
         return false
     }
     return true
@@ -93,11 +96,10 @@ function validateTitle(title) {
 
 function validateDate(date) {
     if (date=="") {
-        //alert("Please select due date for your question")
         return false
     }
     var parts = date.split('/');
-    //please put attention to the month (parts[0]), Javascript counts months from 0:
+    // notice the month (parts[0]), Javascript counts months from 0:
     // January - 0, February - 1, etc
     var mydate = new Date(parts[2],parts[0]-1,parts[1],'23','59','59');
     var today = new Date()
@@ -136,22 +138,17 @@ function validateItems(items_lst) {
     var lines = items_lst.split("#");
     for (var j = 0; j < lines.length; j++) {
         if (lines[j] == "") {
-            //alert("Please fill clothing item " + (j+1) + " or remove it.");
             return false;
-            // continue;
         }
         var sub_items = lines[j].split(",");
         if (sub_items[0] == "") {
-            //alert("Please specify clothing items in row " + (j+1))
             return false;
         }
         if (sub_items[1] == "") {
-            //alert("Please specify color fot item " + sub_items[0])
             return false;
         }
 
         if (sub_items[2] == "") {
-            //alert("Please specify pattern fot item " + sub_items[0])
             return false;
         }
 

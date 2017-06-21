@@ -118,8 +118,6 @@ function filterQuestions(){
 function post(path, params, method) {
     method = method || "post"; // Set method to post by default if not specified.
 
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
     var form = document.createElement("form");
     form.setAttribute("method", method);
     form.setAttribute("action", path);
@@ -153,7 +151,6 @@ function viewResults(questionId){
       				// Error
       				alert(result.error_text);
   				} else {
-              		//alert("Your question was posted successfully!\nLet's answer other users questions!")
               		window.location.replace("/question-result/"+result["q_id"]);
       			}
   			}
@@ -195,7 +192,6 @@ function filterResults(questionId){
         				// Error
         				alert(result.error_text);
     				} else {
-                		//alert("Your question was posted successfully!\nLet's answer other users questions!")
                 		window.location.replace("/view-result-filter/"+result["q_id"]+"/"+result["gender"]+"/"+result["minAge"]+"/"+result["maxAge"]+"/");
         			}
     			}
@@ -203,6 +199,7 @@ function filterResults(questionId){
 }
 
 function checkPasswordMatch() {
+    // verify that user has entered the same password in both fields
     var password = $("#password").val();
     var confirmPassword = $("#confirm_password").val();
 
