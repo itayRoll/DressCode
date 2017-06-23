@@ -1,4 +1,3 @@
-//google.charts.setOnLoadCallback(drawChart);
 function drawChart(fit, n_fit, p_fit,s_fit, s_n_fit, s_p_fit, filter) {
     if (fit>0 || n_fit >0 || p_fit >0) {
         var data = google.visualization.arrayToDataTable([
@@ -17,7 +16,6 @@ function drawChart(fit, n_fit, p_fit,s_fit, s_n_fit, s_p_fit, filter) {
             width: 480,
             height: 240,
             'chartArea': {'width': '95%', 'height': '80%'},
-            //colors: ['#e0440e', '#ec8f6e', '#f6c7b6'], // mint
             colors: ['#68c47c', '#a39a99', '#f95967'], // green red grey
             pieSliceTextStyle: {
                 color: 'black',

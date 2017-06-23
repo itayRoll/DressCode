@@ -38,6 +38,4 @@ urlpatterns = [
     url(r'^initial-feed/$', views.get_initial_feed, name='get_initial_feed'),
     url(r'^userprofile/$', views.get_profile, name='get_profile'),
     url(r'^negative-report/$', views.negative_report, name='negative_report'),
-    # url(r'^ask/$', views.post_question, name='post_question'),
-
 ]

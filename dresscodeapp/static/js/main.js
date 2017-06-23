@@ -26,8 +26,10 @@ function postPreAnswer(questionId, vote, numOfQuestions) {
 }
 
 function postAnswer(questionId, vote, numOfQuestions, userScore) {
+  // by counting number of calls we can know how many answers user have answers so far,
+  // and know when loaded feed is done, and more feed should be loaded.
   numOfCalls = numOfCalls+1
-  if (vote >=0) {
+  if (vote >=0) { // vote = -1 when user report negative report
         $('#thanks'+questionId).show()
         $('#thanks'+questionId).fadeOut(5000)
         var thankyou = 'Thanks for answering!';
@@ -43,7 +45,7 @@ function postAnswer(questionId, vote, numOfQuestions, userScore) {
     }
     $('#question'+questionId).hide()
     $('#question_row'+questionId).fadeOut(5000)
-	if (numOfCalls == numOfQuestions)
+	if (numOfCalls == numOfQuestions)  // load more feed!!
 	{
 	    $('#questions_table').hide()
 	    $('#gettoknowyou').hide()

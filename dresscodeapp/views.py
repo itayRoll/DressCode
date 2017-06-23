@@ -81,10 +81,13 @@ def signup_user(request):
         try:
             user = User.objects.get(username=username)
             # user is already in the system
-            return render(request, 'dresscodeapp/base.html', {'signup_err_msg': 'Username already exists', 'email': email, 'dob': dob})
+            return render(request, 'dresscodeapp/base.html',
+                          {'signup_err_msg': 'Username already exists', 'email': email, 'dob': dob})
         except:
-            user = User.objects.create_user(username=username, email=email, password=password) # create django user object
-            fuser = Fuser(user=user, gender=gender, dob=datetime.strptime(dob, "%m/%d/%Y").date()) # create fuser object points to user
+            user = User.objects.create_user(username=username, email=email,
+                                            password=password)  # create django user object
+            fuser = Fuser(user=user, gender=gender,
+                          dob=datetime.strptime(dob, "%m/%d/%Y").date())  # create fuser object points to user
             fuser.save()
     user = authenticate(username=username, password=password)
     if user is not None and user.is_active:
@@ -108,16 +111,18 @@ def post_question_page(request):
 @login_required(login_url='/home/')
 def filter_questions_page(request):
     return render(request, 'dresscodeapp/filterquestions.html',
-                  {'clothingItems': ClothingItem.TYPES, 'colors': ClothingItem.COLORS, 'patterns': ClothingItem.PATTERN})
+                  {'clothingItems': ClothingItem.TYPES, 'colors': ClothingItem.COLORS,
+                   'patterns': ClothingItem.PATTERN})
 
 
 @login_required(login_url='/home/')
-def return_filtered_results(request):
+def return_filtered_results(request):  # filter top look page
     curr_username = request.user.username
     gender = request.POST.get('gender')
     all_items = request.POST.get('items_lst').split("#")
     items_lst = []
     if len(all_items) > 0 and len(all_items[0]) > 0:
+        # filter clothing items
         for item_str in all_items:
             n, c, p = item_str.split(',')
             try:
@@ -125,21 +130,24 @@ def return_filtered_results(request):
             except:
                 return render(request, 'dresscodeapp/filteredresults.html', {'questions': []})
 
-    # retrieve questions answered by specified gender, from future, not asked by user nor answered by him
+    # filter gender
     if len(gender) > 0:
         questions_feed = Question.objects.filter(user__gender=gender)
     else:
         questions_feed = Question.objects.filter()
+
+    # filter out negative reports
     reported_question_ids = [nr.question.pk for nr in NegativeReport.objects.filter(user__user__username=curr_username)]
     questions_feed = [q for q in questions_feed if
-                 all([ci in q.clothing_items.all() for ci in items_lst]) and not q.pk in reported_question_ids]
+                      all([ci in q.clothing_items.all() for ci in items_lst]) and not q.pk in reported_question_ids]
 
     # sort the questions by rate
     questions_rate = {}
     for question in questions_feed:
         questions_rate[question] = get_question_score(question.pk)
+    sorted_questions = [entry[0] for entry in
+                        (sorted(questions_rate.items(), key=operator.itemgetter(1), reverse=True)[:NUM_TOP_LOOKS])]
 
-    sorted_questions = [entry[0] for entry in (sorted(questions_rate.items(), key=operator.itemgetter(1), reverse=True)[:NUM_TOP_LOOKS])]
     return render(request, 'dresscodeapp/filteredresults.html', {'questions': sorted_questions})
 
 
@@ -152,12 +160,11 @@ def question_page(request, q_pk):
 @login_required(login_url='/home/')
 def post_answer(request):
     curr_username = request.user.username
-    spam_threshold = datetime.now() - timedelta(seconds= SPAM_SECONDS_GAP)
-    recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold,
-                                                      user__user__username=curr_username)
+    spam_threshold = datetime.now() - timedelta(seconds=SPAM_SECONDS_GAP)
+    recently_answered_by_user = Answer.objects.filter(published_date__gte=spam_threshold, user__user__username=curr_username)
     answerer = Fuser.objects.get(user__username=curr_username)
     if len(recently_answered_by_user) > SPAM_ANSWERS_GAP:
-        # too many answers within to little time - ban user
+        # too many answers within to little time - ban user for 24 hours, not increasing spammer credit yet for this violation
         answerer.last_ban_timestamp = timezone.now()
         answerer.save()
         logout(request)
@@ -170,8 +177,8 @@ def post_answer(request):
             else:
                 res = '{0} hours'.format(hours)
             return HttpResponse('spam#{0}'.format(answerer.user.username))
-    answerer.num_answers += 1 # increase answering user number of answers
-    answerer.score += USER_SCORE_FOR_NEW_ANSWER # increase answering user score
+    answerer.num_answers += 1  # increase answering user number of answers
+    answerer.score += USER_SCORE_FOR_NEW_ANSWER  # increase answering user score
     vote = request.POST['vote']
     question_pk = request.POST['question_id']
     answer = Answer(vote=vote, question_id=question_pk, user=answerer)
@@ -180,16 +187,16 @@ def post_answer(request):
 
     question = Question.objects.get(pk=question_pk)
     if not question.is_system_question:
-        find_spammer_by_answer(question_pk, curr_username, vote)
+        find_spammer_by_answer(question_pk, curr_username, vote)  # if in minority opinion (less then 10%)
     return HttpResponse('success')
 
 
 def find_spammer_by_answer(question_id, answerer_name, vote):
     spammers = Fuser.objects.filter(spammer=True)
-    answers_without_spammers = Answer.objects.filter(question_id=question_id).exclude(user__in=spammers) # filter out spammers
+    answers_without_spammers = Answer.objects.filter(question_id=question_id).exclude(user__in=spammers)  # filter out spammers
 
     num_answers_items = len(answers_without_spammers)
-    if num_answers_items >= MIN_ANSWERS_TO_DETERMINE_SPAMMER:
+    if num_answers_items >= MIN_ANSWERS_TO_DETERMINE_SPAMMER:  # otherwise not enough info to detect spammer
         fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='1'))
         no_fit_vote = len(Answer.objects.filter(pk__in=answers_without_spammers, vote='2'))
         partial_fit_votes = num_answers_items - fit_vote - no_fit_vote
@@ -208,23 +215,27 @@ def update_spammer_credit(name):
     fuser = Fuser.objects.get(user__username=name)
     fuser.spammer_credit += 1
     if fuser.spammer_credit >= 0.85 * (fuser.num_questions + fuser.num_answers):
-        fuser.spammer = True
+        fuser.spammer = True  # spammer if user's spammer credit more then it's total activity...
     fuser.save()
 
 
 @login_required(login_url='/home/')
 def get_questions_feed(request):
     curr_username = request.user.username
-    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)] # questions already answered by user
-    questions_feed = [q for q in Question.objects.filter(is_system_question=True) if q.pk not in answered_ids] # filter out answered questions
+
+    # questions already answered by user
+    answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
+    # filter out answered questions from initial questions
+    questions_feed = [q for q in Question.objects.filter(is_system_question=True) if q.pk not in answered_ids]
     if len(questions_feed) != 0:
-        # user has just signed up for the system - present initial questions
+        # user has just signed up for the system - present initial questions (in order to learn his/her taste)
         return HttpResponseRedirect('/initial-feed/')
 
-    # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
+    # user cant answer his own questions, questions with past due date are irrelevant, spammers are excluded
     reported_question_ids = [nr.question.pk for nr in NegativeReport.objects.filter(user__user__username=curr_username)]
-    questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(
-        user__user__username=curr_username) if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids and not q.pk in reported_question_ids][:QUESTIONS_FEED_LENGTH]
+    questions_feed = [q for q in Question.objects.filter(due_date__gte=timezone.now()).exclude(user__user__username=curr_username)
+                      if not q.user.spammer and not q.items_not_as_pic and not q.pk in answered_ids
+                      and not q.pk in reported_question_ids][:QUESTIONS_FEED_LENGTH]
 
     fuser = Fuser.objects.get(user__username=curr_username)
     # final sorting of questions is based on the user's score and the time until the due date arrives
@@ -238,10 +249,10 @@ def get_initial_feed(request):
     curr_username = request.user.username
     answered_ids = [a.question_id for a in Answer.objects.filter(user__user__username=curr_username)]
 
-    # user cant answer his own question, questions with past due date are irrelevant, spammers are excluded
-    questions_feed = [q for q in
-                      [q for q in Question.objects.filter(is_system_question=True)] if q.pk not in answered_ids]
-    if len(questions_feed) == 0:
+    # user cant answer same question twice, excluding answered questions
+    questions_feed = [q for q in[q for q in Question.objects.filter(is_system_question=True)]
+                      if q.pk not in answered_ids]
+    if len(questions_feed) == 0:  # no more initial questions, redirect to feed
         return HttpResponseRedirect('/questionsfeed/')
     else:
         return render(request, 'dresscodeapp/initial_feed.html', {'questions': questions_feed})
@@ -305,23 +316,23 @@ def post_question(request):
         question.save()
 
     user = Fuser.objects.get(user__username=request.user.username)
-    user.score -= USER_SCORE_FOR_NEW_QUESTION # decrease user score after posting a question
-    user.num_questions += 1; # increase user number of questions asked
+    user.score -= USER_SCORE_FOR_NEW_QUESTION  # decrease user score after posting a question
+    user.num_questions += 1;  # increase user number of questions asked
     user.save()
     return HttpResponse(json.dumps({'success': True, 'qpk': question.pk}))
 
 
 @login_required(login_url='/home/')
-def get_results(request):
+def get_results(request):  # user results page
     curr_username = request.user.username
-    # user cant answer his own question, questions with past due date are irrelevant
+    # display only current user questions
     questions_feed = Question.objects.filter(user__user__username=curr_username)
 
     return render(request, 'dresscodeapp/results.html', {'questions': questions_feed})
 
 
 @login_required(login_url='/home/')
-def get_profile(request):
+def get_profile(request):  # profile page
     curr_username = request.user.username
     fuser = Fuser.objects.get(user__username=curr_username)
     return render(request, 'dresscodeapp/userprofile.html', {'curruser': fuser})
@@ -345,16 +356,17 @@ def view_result(request):
 
 
 @login_required(login_url='/home/')
-def view_question(request, q_pk):
+def view_question(request, q_pk):  # find answers for specific question
     question = Question.objects.get(pk=q_pk)
     answers = Answer.objects.filter(question_id=q_pk)
     similar_users_answers = Answer.objects.filter(question_id=q_pk,
-                                                  user__in=get_similar_users(list(Fuser.objects.all()),
-                                                                             request.user.username))
+                                                  user__in=get_similar_users(list(Fuser.objects.all()), request.user.username))
 
-    # we will not negotiate with terrorists!!
+    # we will not negotiate with terrorists!! removing spammers answers
     answers = Answer.objects.filter(pk__in=answers).exclude(user__spammer=True)
     similar_users_answers = Answer.objects.filter(pk__in=similar_users_answers).exclude(user__spammer=True)
+
+    # counting answers by vote type (fit, not it, partial fit)
     fit, no_fit, partial_fit = get_answers_rate(answers)
     s_fit, s_no_fit, s_partial_fit = get_answers_rate(similar_users_answers)
 
@@ -364,7 +376,7 @@ def view_question(request, q_pk):
 
 
 @login_required(login_url='/home/')
-def view_question_with_filters(request, q_pk, gender, minage, maxage):
+def view_question_with_filters(request, q_pk, gender, minage, maxage): # review answers of specific question
     filter_text = get_filter_text(gender, minage, maxage)
     relevant_users = None
     question = Question.objects.get(pk=q_pk)
@@ -372,9 +384,11 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
     if gender == 'u' and minage == '0' and maxage == '0':
         return view_question(request, q_pk)
 
+    # filter users hoe answered by gender
     if gender != 'u':
         relevant_users = Fuser.objects.filter(gender=gender)
 
+    # filter users hoe answered by age
     this_year = datetime.now().year
     minage = int(minage)
     maxage = int(maxage)
@@ -396,22 +410,22 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
     min_date = datetime(year=min_year, month=1, day=1)
     max_date = datetime(year=max_year, month=12, day=31)
 
-    """
-        exclude users from relevant_users by birthdate..
-        can't find this field of user...
-    """
     if minage != 0 or maxage != 0:
         if relevant_users is None:
             relevant_users = Fuser.objects.filter(dob__gte=min_date, dob__lte=max_date)
         else:
             relevant_users = Fuser.objects.filter(pk__in=relevant_users, dob__gte=min_date, dob__lte=max_date)
 
+    # answers filtered by relevant users how answered (age+gender)
     answers = Answer.objects.filter(question_id=q_pk, user__in=relevant_users)
-    similar_users_answers = Answer.objects.filter(question_id=q_pk, user__in=get_similar_users(relevant_users, request.user.username))
+    similar_users_answers = Answer.objects.filter(question_id=q_pk,
+                                                  user__in=get_similar_users(relevant_users, request.user.username))
 
-    # we will not negotiate with terrorists!!
+    # we will not negotiate with terrorists!! filter out spammers
     answers = Answer.objects.filter(pk__in=answers).exclude(user__spammer=True)
     similar_users_answers = Answer.objects.filter(pk__in=similar_users_answers).exclude(user__spammer=True)
+
+    # counting answers bu vote
     fit, no_fit, partial_fit = get_answers_rate(answers)
     s_fit, s_no_fit, s_partial_fit = get_answers_rate(similar_users_answers)
 
@@ -421,7 +435,7 @@ def view_question_with_filters(request, q_pk, gender, minage, maxage):
                    'filter': True, 'filter_text': filter_text})
 
 
-def get_filter_text(gender, minage, maxage):
+def get_filter_text(gender, minage, maxage):  # creating the text displayed for current filters
     filter_text = ""
     minage = int(minage)
     maxage = int(maxage)
@@ -453,7 +467,7 @@ def get_filter_text(gender, minage, maxage):
     return filter_text
 
 
-def get_answers_rate(answers):
+def get_answers_rate(answers):  # counting num of answers by rate/vote
     answers_fit = Answer.objects.filter(pk__in=answers, vote='1')
     answers_no_fit = Answer.objects.filter(pk__in=answers, vote='2')
     answers_partial_fit = Answer.objects.filter(pk__in=answers, vote='0')
@@ -463,7 +477,7 @@ def get_answers_rate(answers):
 
 
 def get_question_score(qid):
-    answers = Answer.objects.filter(question_id=qid).exclude(user__spammer=True) # ignore spammers answers
+    answers = Answer.objects.filter(question_id=qid).exclude(user__spammer=True)  # ignore spammers answers
     total = float(len(answers))
     if total == 0:
         return 0
@@ -478,7 +492,8 @@ def get_similar_users(users, curr_username):
     similar_users = []
 
     # create a dictionary of the question id and the user vote for that question
-    akser_answers = dict((a.question_id, int(a.vote)) for a in Answer.objects.filter(user__user__username=curr_username))
+    akser_answers = dict(
+        (a.question_id, int(a.vote)) for a in Answer.objects.filter(user__user__username=curr_username))
     for user in users:
         if user.user.username == curr_username:
             # user similarity is obviously reflexive - skip
@@ -506,7 +521,8 @@ def get_similar_users(users, curr_username):
 def negative_report(request):
     curr_username = request.user.username
     qpk = int(request.POST['qpk'])
-    question_reports_from_same_user = NegativeReport.objects.filter(question__pk=qpk, user__user__username=curr_username)
+    question_reports_from_same_user = NegativeReport.objects.filter(question__pk=qpk,
+                                                                    user__user__username=curr_username)
     if not question_reports_from_same_user:
         # register report
         q = Question.objects.get(pk=qpk)
@@ -518,7 +534,7 @@ def negative_report(request):
             # the asker is probably a spammer - ban him!
             q.user.last_ban_timestamp = timezone.now()
             q.user.save()
-            update_spammer_credit(q.user.user.username)
+            update_spammer_credit(q.user.user.username) # update the spammer credit, user may be declared as spammer
             q.items_not_as_pic = True
             q.save()
         # approve report
