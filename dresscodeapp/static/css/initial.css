@@ -2,10 +2,10 @@
     position:absolute;
     width:1150px;
     height:650px;
-    
+	
     top:50%;
-    
-    margin-left:0%;
+	
+	margin-left:0%;
 
 }
 
@@ -13,49 +13,23 @@ table {
 margin-bottom: 70px
 }
 
-.my-btn{
-    padding: 12px 20px;
-    margin: 10px 2px;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-}
-
-.my-btn-yay {
-    background-color: #000000;
-    color: white;
-}
-
-.my-btn-yay:hover {
-    background-color: #68c47c;
-    color: white;
-}
-
-.my-btn-nay {
-    background-color: #000000;
-    color: white;
-}
-
-.my-btn-nay:hover {
-    background-color: #f95967;
-    color: white;
-}
-
-.my-btn-meh {
-    background-color: #000000;
-    color: white;
-}
-
-.my-btn-meh:hover {
-    background-color: #a39a99;
-    color: white;
-}
-        
+.my-btn{background-color: #000000;
+                      color: white;
+                      padding: 12px 20px;
+                      margin: 10px 2px;
+                      border: none;
+                      cursor: pointer;
+                      
+                      
+                      
+                      text-align: center;
+		}
+		
 img {
     display: inline-block;
     vertical-align: middle;
     width: 400px;
-    margin-right:10%;
+	margin-right:10%;
 }
 .text {
    display: inline-block;
@@ -85,7 +59,7 @@ font-weight:bold;text-decoration:underline;color:#000000;background-color:#FFFFF
 }
 .mycss5
 {
-font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:5px;left: 50%;
+font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15px;text-align:middle;line-height:1;margin:0px;padding:10px; left: 50%;
 }
 .mycss6
 {
@@ -95,32 +69,5 @@ font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:15p
 .mycss7
 {
 font-weight:bold;color:#000000;letter-spacing:1pt;word-spacing:2pt;font-size:30px;text-align:center;line-height:1.5;margin:0px;padding:5px;left: 50%;margin-top:-50px;
-}
 
-.loader {
-    border: 16px solid #b6b7ba;
-    border-top: 16px solid #3498db;
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.filterbtn{
-	background-color: #000000;
-	color: white;
-	padding: 12px 20px;
-	margin: 10px 2px;
-	border: none;
-	cursor: pointer;
-	text-align: center;
-}
-.filterbtn:hover {
-	background-color: #a39a99;
-	color: white;
 }
