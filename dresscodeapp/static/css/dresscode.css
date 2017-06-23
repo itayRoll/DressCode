@@ -21,36 +21,6 @@ margin-bottom: 70px
     text-align: center;
 }
 
-.my-btn-yay {
-    background-color: #000000;
-    color: white;
-}
-
-.my-btn-yay:hover {
-    background-color: #68c47c;
-    color: white;
-}
-
-.my-btn-nay {
-    background-color: #000000;
-    color: white;
-}
-
-.my-btn-nay:hover {
-    background-color: #f95967;
-    color: white;
-}
-
-.my-btn-meh {
-    background-color: #000000;
-    color: white;
-}
-
-.my-btn-meh:hover {
-    background-color: #a39a99;
-    color: white;
-}
-        
 img {
     display: inline-block;
     vertical-align: middle;
